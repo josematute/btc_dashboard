@@ -1,83 +1,11 @@
 "use client"
 
-import { BitcoinValue } from "@/components/bitcoin-value"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockBlock, mockBlockStats } from "@/lib/mock-data"
 import { formatBytes, formatNumber, formatDate, shortenHash } from "@/lib/utils"
 import Link from "next/link"
-
-// Using SVG icons since we couldn't install lucide-react
-const ArrowLeftIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="2"
-		strokeLinecap="round"
-		strokeLinejoin="round"
-		className="h-4 w-4">
-		<path d="m12 19-7-7 7-7"></path>
-		<path d="M19 12H5"></path>
-	</svg>
-)
-
-const HashIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="2"
-		strokeLinecap="round"
-		strokeLinejoin="round"
-		className="h-5 w-5">
-		<line x1="4" y1="9" x2="20" y2="9"></line>
-		<line x1="4" y1="15" x2="20" y2="15"></line>
-		<line x1="10" y1="3" x2="8" y2="21"></line>
-		<line x1="16" y1="3" x2="14" y2="21"></line>
-	</svg>
-)
-
-const LayersIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="2"
-		strokeLinecap="round"
-		strokeLinejoin="round"
-		className="h-5 w-5">
-		<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"></path>
-		<path d="m22 12.18-8.58 3.91a2 2 0 0 1-1.66 0L2.6 12.18"></path>
-		<path d="m22 16.18-8.58 3.91a2 2 0 0 1-1.66 0L2.6 16.18"></path>
-	</svg>
-)
-
-const DatabaseIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="2"
-		strokeLinecap="round"
-		strokeLinejoin="round"
-		className="h-5 w-5">
-		<ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-		<path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-		<path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path>
-	</svg>
-)
+import { BitcoinValue } from "@/components/bitcoin-value"
+import { ArrowLeft, Hash, Layers, Database } from "lucide-react"
 
 interface BlockPageProps {
 	params: {
@@ -98,7 +26,7 @@ export default function BlockPage({ params }: BlockPageProps) {
 		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
 			<div className="flex items-center gap-2">
 				<Link href="/" className="rounded-md border p-2 inline-flex items-center justify-center hover:bg-muted">
-					<ArrowLeftIcon />
+					<ArrowLeft className="h-4 w-4" />
 				</Link>
 				<h1 className="text-3xl font-bold tracking-tight">Block #{block.height}</h1>
 			</div>
@@ -106,7 +34,7 @@ export default function BlockPage({ params }: BlockPageProps) {
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
-						<HashIcon />
+						<Hash className="h-5 w-5" />
 						<span>Block Information</span>
 					</CardTitle>
 					<CardDescription>Detailed information about block #{block.height}</CardDescription>
@@ -156,7 +84,7 @@ export default function BlockPage({ params }: BlockPageProps) {
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
-						<LayersIcon />
+						<Layers className="h-5 w-5" />
 						<span>Block Statistics</span>
 					</CardTitle>
 					<CardDescription>Statistical data for block #{block.height}</CardDescription>
@@ -204,7 +132,7 @@ export default function BlockPage({ params }: BlockPageProps) {
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
-						<DatabaseIcon />
+						<Database className="h-5 w-5" />
 						<span>Transactions</span>
 					</CardTitle>
 					<CardDescription>Transactions included in block #{block.height}</CardDescription>
