@@ -20,7 +20,7 @@ export function BlockList({ blocks }: BlockListProps) {
 					<div className="space-y-1">
 						<div className="flex items-center gap-2">
 							<span className="font-mono text-sm font-medium">{block.height}</span>
-							<a href={`#/block/${block.hash}`} className="text-sm hover:underline text-blue-600 dark:text-blue-400 font-mono">
+							<a href={`block/${block.hash}`} className="text-sm hover:underline text-blue-600 dark:text-blue-400 font-mono">
 								{shortenHash(block.hash)}
 							</a>
 						</div>

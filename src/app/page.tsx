@@ -3,6 +3,7 @@ import { BlockList } from "@/components/block-list"
 import { mockBlockchainInfo, mockNetworkInfo, mockMempoolInfo, mockBlocks } from "@/lib/mock-data"
 import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
 
 // We're using dynamic imports for the icons since we couldn't install lucide-react
 export default function Home() {
@@ -111,7 +112,12 @@ export default function Home() {
 						<BlocksIcon />
 						<span>Latest Blocks</span>
 					</CardTitle>
-					<CardDescription>The most recently mined blocks on the Bitcoin blockchain</CardDescription>
+					<CardDescription>
+						The most recently mined blocks on the Bitcoin blockchain.{" "}
+						<Link href="/blocks" className="text-primary hover:underline">
+							View all
+						</Link>
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<BlockList blocks={mockBlocks} />
