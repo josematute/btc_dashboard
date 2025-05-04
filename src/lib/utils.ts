@@ -28,3 +28,4 @@ export function formatDate(timestamp: number) {
 export function shortenHash(hash: string, length = 8) {
   return `${hash.substring(0, length)}...${hash.substring(hash.length - length)}`
 }
+
