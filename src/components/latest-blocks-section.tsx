@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Blocks } from "lucide-react"
 import Link from "next/link"
 import { getMoreBlocks, BlockWithTxCount } from "@/lib/block-actions"
+import { LoadingSpinner } from "./loading-spinner"
 
 interface LatestBlocksSectionProps {
 	initialBlocks: BlockWithTxCount[]
@@ -55,11 +56,17 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 			<CardContent>
 				<BlockList blocks={blocks} />
 
-				<div className="mt-4 text-center">
-					<Button variant="outline" onClick={loadMoreBlocks} disabled={isLoading} className="w-full">
-						{isLoading ? "Loading..." : "Load More Blocks"}
-					</Button>
-				</div>
+				{isLoading ? (
+					<div className="mt-4">
+						<LoadingSpinner size="sm" message="Mining additional blocks..." />
+					</div>
+				) : (
+					<div className="mt-4 text-center">
+						<Button variant="outline" onClick={loadMoreBlocks} disabled={isLoading} className="w-full">
+							Load More Blocks
+						</Button>
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	)

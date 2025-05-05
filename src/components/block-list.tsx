@@ -17,7 +17,7 @@ export function BlockList({ blocks }: BlockListProps) {
 								{shortenHash(block.hash)}
 							</a>
 						</div>
-						<p className="text-xs text-muted-foreground">{formatDate(block.time / 1000)}</p>
+						<p className="text-xs text-muted-foreground">{formatDate(block.time)}</p>
 					</div>
 					<div className="text-right">
 						<div className="text-sm font-medium">{block.txCount} txs</div>

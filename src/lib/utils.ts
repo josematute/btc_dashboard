@@ -22,7 +22,18 @@ export function formatNumber(num: number) {
 }
 
 export function formatDate(timestamp: number) {
-  return new Date(timestamp * 1000).toLocaleString()
+  // Bitcoin timestamps are in seconds since UNIX epoch
+  const date = new Date(timestamp * 1000)
+
+  // Format date with more readable output
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  })
 }
 
 export function shortenHash(hash: string, length = 8) {

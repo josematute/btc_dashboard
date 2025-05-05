@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Link from "next/link"
 import Image from "next/image"
 import { Blocks, Network, Database, Clock } from "lucide-react"
-import { Suspense } from "react"
 import { cookies } from "next/headers"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
 
@@ -201,9 +200,7 @@ async function DashboardContent() {
 export default function Home() {
 	return (
 		<div className="max-w-6xl mx-auto py-6 px-4">
-			<Suspense fallback={<div className="py-16 text-center">Loading Bitcoin data...</div>}>
-				<DashboardContent />
-			</Suspense>
+			<DashboardContent />
 		</div>
 	)
 }
