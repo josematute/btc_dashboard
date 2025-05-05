@@ -10,8 +10,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { loginAction } from "@/lib/actions"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { Eye, EyeOff } from "lucide-react"
 
 const formSchema = z.object({
 	username: z.string().min(2, { message: "Username must be at least 2 characters" }),
@@ -20,6 +21,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
 	const router = useRouter()
+	const [showPassword, setShowPassword] = useState(false)
 	const [state, formAction, isPending] = useActionState(loginAction, {
 		message: "",
 		errors: {},
@@ -69,7 +71,7 @@ export default function LoginPage() {
 									<FormItem>
 										<FormLabel>Username</FormLabel>
 										<FormControl>
-											<Input placeholder="johndoe" {...field} name="username" />
+											<Input placeholder="halfinney" {...field} name="username" />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -87,7 +89,22 @@ export default function LoginPage() {
 											</Link>
 										</div>
 										<FormControl>
-											<Input type="password" {...field} name="password" />
+											<div className="relative">
+												<Input type={showPassword ? "text" : "password"} {...field} name="password" placeholder="********" />
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+													onClick={() => setShowPassword(!showPassword)}>
+													{showPassword ? (
+														<EyeOff className="h-4 w-4 text-muted-foreground" />
+													) : (
+														<Eye className="h-4 w-4 text-muted-foreground" />
+													)}
+													<span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+												</Button>
+											</div>
 										</FormControl>
 										<FormMessage />
 									</FormItem>

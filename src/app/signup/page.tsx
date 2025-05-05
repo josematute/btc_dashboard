@@ -8,19 +8,26 @@ import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Eye, EyeOff } from "lucide-react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { signupAction } from "@/lib/actions"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
 	name: z.string().min(2, { message: "Name must be at least 2 characters" }),
 	email: z.string().email({ message: "Please enter a valid email address" }),
+	username: z.string().min(2, { message: "Username must be at least 2 characters" }),
 	password: z.string().min(6, { message: "Password must be at least 6 characters" })
 })
 
 export default function SignupPage() {
+	const router = useRouter()
+	const [showPassword, setShowPassword] = useState(false)
 	const [state, formAction, isPending] = useActionState(signupAction, {
 		message: "",
-		errors: {}
+		errors: {},
+		success: false
 	})
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -28,9 +35,22 @@ export default function SignupPage() {
 		defaultValues: {
 			name: "",
 			email: "",
+			username: "",
 			password: ""
 		}
 	})
+
+	// If signup is successful, redirect to dashboard
+	useEffect(() => {
+		if (state.success) {
+			// Redirect after a short delay to allow the user to see the success message
+			const redirectTimer = setTimeout(() => {
+				router.push("/") // Go to dashboard instead of login
+			}, 2000)
+
+			return () => clearTimeout(redirectTimer)
+		}
+	}, [state.success, router])
 
 	return (
 		<div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)]">
@@ -55,7 +75,7 @@ export default function SignupPage() {
 									<FormItem>
 										<FormLabel>Name</FormLabel>
 										<FormControl>
-											<Input placeholder="John Doe" {...field} name="name" />
+											<Input placeholder="Hal Finney" {...field} name="name" />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -68,7 +88,20 @@ export default function SignupPage() {
 									<FormItem>
 										<FormLabel>Email</FormLabel>
 										<FormControl>
-											<Input placeholder="m@example.com" {...field} name="email" />
+											<Input placeholder="hal@finney.org" {...field} name="email" />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="username"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Username</FormLabel>
+										<FormControl>
+											<Input placeholder="halfinney" {...field} name="username" />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -81,13 +114,37 @@ export default function SignupPage() {
 									<FormItem>
 										<FormLabel>Password</FormLabel>
 										<FormControl>
-											<Input type="password" {...field} name="password" />
+											<div className="relative">
+												<Input type={showPassword ? "text" : "password"} {...field} name="password" placeholder="********" />
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+													onClick={() => setShowPassword(!showPassword)}>
+													{showPassword ? (
+														<EyeOff className="h-4 w-4 text-muted-foreground" />
+													) : (
+														<Eye className="h-4 w-4 text-muted-foreground" />
+													)}
+													<span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+												</Button>
+											</div>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							{state.message && <p className={`text-sm ${state.errors?._form ? "text-destructive" : "text-green-500"}`}>{state.message}</p>}
+							{state.message && (
+								<div
+									className={`p-3 rounded-md text-sm ${
+										state.success
+											? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+											: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+									}`}>
+									{state.message}
+								</div>
+							)}
 							<Button type="submit" className="w-full" disabled={isPending}>
 								{isPending ? "Creating account..." : "Create account"}
 							</Button>

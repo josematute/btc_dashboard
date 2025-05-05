@@ -11,6 +11,7 @@ const LoginSchema = z.object({
 const SignupSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
+  username: z.string().min(2, { message: "Username must be at least 2 characters" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 })
 
@@ -29,11 +30,13 @@ export type SignupFormState = {
   errors?: {
     name?: string[];
     email?: string[];
+    username?: string[];
     password?: string[];
     _form?: string[];
   };
   message?: string;
   success?: boolean;
+  userData?: UserAndCredentials;
 }
 
 export async function loginAction(prevState: LoginFormState, formData: FormData): Promise<LoginFormState> {
@@ -102,6 +105,7 @@ export async function loginAction(prevState: LoginFormState, formData: FormData)
     console.log('Token:', userData.token.substring(0, 20) + '...')
     console.log('Refresh:', userData.refresh.substring(0, 20) + '...')
 
+
     return {
       message: `Welcome back, ${userData.user.name || userData.user.username}!`,
       success: true,
@@ -124,6 +128,7 @@ export async function signupAction(prevState: SignupFormState, formData: FormDat
   const validatedFields = SignupSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
+    username: formData.get('username'),
     password: formData.get('password'),
   })
 
@@ -136,23 +141,71 @@ export async function signupAction(prevState: SignupFormState, formData: FormDat
     }
   }
 
-  const { name, email, password } = validatedFields.data
+  const { name, email, username, password } = validatedFields.data
 
-  // Simulate a 3-second wait
-  console.log('Signup attempt started, waiting 3 seconds...')
-  await new Promise(resolve => setTimeout(resolve, 3000))
+  // Log the attempt
+  console.log('Signup attempt started with:', { name, email, username })
 
-  // Log the details
-  console.log('Signup attempt completed with:', {
-    name,
-    email,
-    password,
-    timestamp: new Date().toISOString()
-  })
+  try {
+    // Get the server URL from environment variable
+    const serverUrl = process.env.BTC_SERVER_URL || 'http://localhost:8080/'
+    const registerUrl = `${serverUrl}api/v1/auth/register`
 
-  // In a real app, you would create the user here
-  return {
-    message: 'Account created successfully!',
-    success: true
+    console.log(`Making registration request to: ${registerUrl}`)
+
+    // Make the request to the server
+    const response = await fetch(registerUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        username,
+        password,
+      }),
+    })
+
+    // Parse the JSON response
+    const data = await response.json()
+
+    // Log the response for debugging
+    console.log('Registration response status:', response.status)
+    console.log('Registration response body:', JSON.stringify(data, null, 2))
+
+    // Check if registration was successful
+    if (!response.ok) {
+      const errorData = data as ApiError
+      return {
+        message: errorData.message || 'Registration failed. Please try again.',
+        success: false
+      }
+    }
+
+    // Registration successful
+    const userData = data as UserAndCredentials
+
+    // Log authentication data
+    console.log('Registration successful:')
+    console.log('User ID:', userData.user.id)
+    console.log('Username:', userData.user.username)
+    console.log('Token:', userData.token.substring(0, 20) + '...')
+    console.log('Refresh:', userData.refresh.substring(0, 20) + '...')
+
+    return {
+      message: `Account created successfully! Welcome, ${userData.user.name || userData.user.username}!`,
+      success: true,
+      userData: userData
+    }
+  } catch (error) {
+    // Log the error
+    console.error('Registration error:', error)
+
+    // Return an error message
+    return {
+      message: 'An error occurred while creating your account. Please try again.',
+      success: false
+    }
   }
 } 
