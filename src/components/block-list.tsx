@@ -1,15 +1,8 @@
 import { shortenHash, formatDate } from "@/lib/utils"
-
-interface Block {
-	height: number
-	hash: string
-	time: number
-	txCount: number
-	size: number
-}
+import { BlockWithTxCount } from "@/lib/block-actions"
 
 interface BlockListProps {
-	blocks: Block[]
+	blocks: BlockWithTxCount[]
 }
 
 export function BlockList({ blocks }: BlockListProps) {

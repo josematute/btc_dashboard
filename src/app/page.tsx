@@ -1,63 +1,132 @@
 import { StatCard } from "@/components/stat-card"
-import { BlockList } from "@/components/block-list"
-import { mockBlockchainInfo, mockNetworkInfo, mockMempoolInfo, mockBlocks } from "@/lib/mock-data"
 import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
 import { Blocks, Network, Database, Clock } from "lucide-react"
+import { Suspense } from "react"
+import { cookies } from "next/headers"
+import { LatestBlocksSection } from "@/components/latest-blocks-section"
 
-export default function Home() {
+async function getBitcoinInfo() {
+	const cookieStore = await cookies()
+	const token = cookieStore.get("accessToken")?.value
+
+	console.log("accessToken", token)
+
+	if (!token) {
+		return { blockchain: null, network: null, mempool: null }
+	}
+
+	try {
+		// Use our internal API route
+		const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/info`, {
+			cache: "no-store",
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		})
+
+		if (!res.ok) {
+			console.error("Failed to fetch Bitcoin info:", await res.text())
+			return { blockchain: null, network: null, mempool: null }
+		}
+
+		const data = await res.json()
+		return data
+	} catch (error) {
+		console.error("Error fetching Bitcoin info:", error)
+		return { blockchain: null, network: null, mempool: null }
+	}
+}
+
+async function getLatestBlocks() {
+	const cookieStore = await cookies()
+	const token = cookieStore.get("accessToken")?.value
+
+	if (!token) {
+		return { blocks: [] }
+	}
+
+	try {
+		// Use our internal API route
+		const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/blocks?pageSize=10`, {
+			cache: "no-store",
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		})
+
+		if (!res.ok) {
+			console.error("Failed to fetch blocks:", await res.text())
+			return { blocks: [] }
+		}
+
+		const data = await res.json()
+		return data
+	} catch (error) {
+		console.error("Error fetching blocks:", error)
+		return { blocks: [] }
+	}
+}
+
+// Dashboard content component
+async function DashboardContent() {
+	const { blockchain, network, mempool } = await getBitcoinInfo()
+	const { blocks } = await getLatestBlocks()
+
+	// If no data, show login prompt
+	if (!blockchain || !network || !mempool) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-[60vh]">
+				<h2 className="text-2xl font-bold mb-4">Authentication Required</h2>
+				<p className="text-muted-foreground mb-6">Please log in to view Bitcoin blockchain data.</p>
+				<div className="flex gap-4">
+					<Link href="/login" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md">
+						Login
+					</Link>
+					<Link href="/signup" className="bg-secondary text-secondary-foreground px-4 py-2 rounded-md">
+						Sign Up
+					</Link>
+				</div>
+			</div>
+		)
+	}
+
 	return (
-		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
+		<div className="space-y-6">
 			<div>
 				<h1 className="text-3xl font-bold tracking-tight">Bitcoin Dashboard</h1>
 				<p className="text-muted-foreground mt-1">Real-time overview of the Bitcoin blockchain</p>
 			</div>
 
 			{/* Latest Blocks Section */}
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<Blocks className="h-4 w-4" />
-						<span>Latest Blocks</span>
-					</CardTitle>
-					<CardDescription>
-						The most recently mined blocks on the Bitcoin blockchain.{" "}
-						<Link href="/blocks" className="text-primary hover:underline">
-							View all
-						</Link>
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<BlockList blocks={mockBlocks} />
-				</CardContent>
-			</Card>
+			<LatestBlocksSection initialBlocks={blocks} initialPageSize={10} />
 
 			{/* Summary Stats */}
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 				<StatCard
 					title="Chain"
-					value={mockBlockchainInfo.chain.toUpperCase()}
+					value={blockchain.chain.toUpperCase()}
 					description="Current blockchain"
 					icon={<Image src="/Bitcoin.svg.png" alt="Bitcoin" width={16} height={16} />}
 				/>
 				<StatCard
 					title="Block Height"
-					value={formatNumber(mockBlockchainInfo.blocks)}
-					description={`Last updated: ${formatDate(mockBlockchainInfo.time)}`}
+					value={formatNumber(blockchain.blocks)}
+					description={`Last updated: ${formatDate(blockchain.time)}`}
 					icon={<Blocks className="h-4 w-4" />}
 				/>
 				<StatCard
 					title="Connections"
-					value={mockNetworkInfo.connections}
-					description={`Out: ${mockNetworkInfo.connections_out}, In: ${mockNetworkInfo.connections_in}`}
+					value={network.connections}
+					description={`Out: ${network.connections_out}, In: ${network.connections_in}`}
 					icon={<Network className="h-4 w-4" />}
 				/>
 				<StatCard
 					title="Mempool"
-					value={mockMempoolInfo.size}
-					description={`${formatBytes(mockMempoolInfo.bytes)} in pending transactions`}
+					value={mempool.size}
+					description={`${formatBytes(mempool.bytes)} in pending transactions`}
 					icon={<Database className="h-4 w-4" />}
 				/>
 			</div>
@@ -75,19 +144,19 @@ export default function Home() {
 						<div className="grid grid-cols-2 gap-4">
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Difficulty</p>
-								<p className="text-lg font-semibold">{formatNumber(mockBlockchainInfo.difficulty)}</p>
+								<p className="text-lg font-semibold">{formatNumber(blockchain.difficulty)}</p>
 							</div>
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Size on Disk</p>
-								<p className="text-lg font-semibold">{formatBytes(mockBlockchainInfo.size_on_disk)}</p>
+								<p className="text-lg font-semibold">{formatBytes(blockchain.size_on_disk)}</p>
 							</div>
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Version</p>
-								<p className="text-lg font-semibold">{mockNetworkInfo.subversion}</p>
+								<p className="text-lg font-semibold">{network.subversion}</p>
 							</div>
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Mempool Fee</p>
-								<p className="text-lg font-semibold">{mockMempoolInfo.total_fee.toFixed(8)} BTC</p>
+								<p className="text-lg font-semibold">{mempool.total_fee?.toFixed(8)} BTC</p>
 							</div>
 						</div>
 					</CardContent>
@@ -103,7 +172,7 @@ export default function Home() {
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Network Services</p>
 								<div className="flex flex-wrap gap-2 mt-1">
-									{mockNetworkInfo.localservicesnames.map((service) => (
+									{network.localservicesnames.map((service: string) => (
 										<div key={service} className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs">
 											{service}
 										</div>
@@ -113,7 +182,7 @@ export default function Home() {
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Network Status</p>
 								<div className="grid grid-cols-2 gap-2 mt-1">
-									{mockNetworkInfo.networks.map((network) => (
+									{network.networks?.map((network: { name: string; reachable: boolean }) => (
 										<div key={network.name} className="flex items-center gap-2">
 											<div className={`h-2 w-2 rounded-full ${network.reachable ? "bg-green-500" : "bg-red-500"}`} />
 											<span className="text-sm">{network.name}</span>
@@ -125,6 +194,16 @@ export default function Home() {
 					</CardContent>
 				</Card>
 			</div>
+		</div>
+	)
+}
+
+export default function Home() {
+	return (
+		<div className="max-w-6xl mx-auto py-6 px-4">
+			<Suspense fallback={<div className="py-16 text-center">Loading Bitcoin data...</div>}>
+				<DashboardContent />
+			</Suspense>
 		</div>
 	)
 }
