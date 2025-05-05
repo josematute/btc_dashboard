@@ -1,8 +1,11 @@
-import { BlockList } from "@/components/block-list"
-import { mockBlocks } from "@/lib/mock-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { getLatestBlocks } from "@/lib/block-actions"
+import { LatestBlocksSection } from "@/components/latest-blocks-section"
 
-export default function BlocksPage() {
+export default async function BlocksPage() {
+	// Fetch the latest blocks (20 instead of default 10)
+	const { blocks } = await getLatestBlocks(20)
+
 	return (
 		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
 			<div>
@@ -10,15 +13,7 @@ export default function BlocksPage() {
 				<p className="text-muted-foreground mt-1">Browse the latest Bitcoin blocks</p>
 			</div>
 
-			<Card>
-				<CardHeader>
-					<CardTitle>Latest Blocks</CardTitle>
-					<CardDescription>The most recently mined blocks on the Bitcoin blockchain</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<BlockList blocks={mockBlocks} />
-				</CardContent>
-			</Card>
+			<LatestBlocksSection initialBlocks={blocks} initialPageSize={20} />
 		</div>
 	)
 }

@@ -1,10 +1,11 @@
 // This is now a Server Component
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { mockBlock, mockBlockStats } from "@/lib/mock-data"
 import { formatBytes, formatNumber, formatDate, shortenHash } from "@/lib/utils"
 import Link from "next/link"
-import { BitcoinValue } from "@/components/bitcoin-value"
-import { ArrowLeft, Hash, Layers, Database } from "lucide-react"
+import { ArrowLeft, Hash, Database } from "lucide-react"
+import { getBlock } from "@/lib/block-actions"
+import { notFound } from "next/navigation"
+import { Block } from "@/lib/types"
 
 interface BlockPageProps {
 	params: {
@@ -12,14 +13,25 @@ interface BlockPageProps {
 	}
 }
 
-export default function BlockPage({ params }: BlockPageProps) {
-	// In a real app, we would fetch the block data based on the ID
-	// For now, we'll just use our mock data
-	const block = mockBlock
-	const blockStats = mockBlockStats
+// Add nextblockhash to the Block type
+type BlockWithNextBlock = Block & {
+	nextblockhash?: string
+}
+
+export default async function BlockPage({ params }: BlockPageProps) {
+	// Fetch the real block data
+	const block = await getBlock(params.id)
+
+	// If no block was found, show the 404 page
+	if (!block) {
+		notFound()
+	}
 
 	// Log the block ID from params
 	console.log(`Block ID: ${params.id}`)
+
+	// Cast the block to include the optional nextblockhash field
+	const blockWithNext = block as BlockWithNextBlock
 
 	return (
 		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
@@ -47,7 +59,7 @@ export default function BlockPage({ params }: BlockPageProps) {
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Previous Block</p>
 							<p className="text-sm font-mono truncate">
-								<Link href={`/block/${block.height - 1}`} className="hover:text-primary">
+								<Link href={`/block/${block.previousblockhash}`} className="hover:text-primary">
 									{shortenHash(block.previousblockhash, 12)}
 								</Link>
 							</p>
@@ -76,53 +88,19 @@ export default function BlockPage({ params }: BlockPageProps) {
 							<p className="text-sm font-medium text-muted-foreground">Merkle Root</p>
 							<p className="text-sm font-mono truncate">{shortenHash(block.merkleroot, 12)}</p>
 						</div>
-					</div>
-				</CardContent>
-			</Card>
-
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<Layers className="h-5 w-5" />
-						<span>Block Statistics</span>
-					</CardTitle>
-					<CardDescription>Statistical data for block #{block.height}</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="grid gap-4 md:grid-cols-3">
+						{blockWithNext.nextblockhash && (
+							<div>
+								<p className="text-sm font-medium text-muted-foreground">Next Block</p>
+								<p className="text-sm font-mono truncate">
+									<Link href={`/block/${blockWithNext.nextblockhash}`} className="hover:text-primary">
+										{shortenHash(blockWithNext.nextblockhash, 12)}
+									</Link>
+								</p>
+							</div>
+						)}
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">Total Fees</p>
-							<p className="text-sm">
-								<BitcoinValue value={blockStats.totalfee / 100000000} />
-							</p>
-						</div>
-						<div>
-							<p className="text-sm font-medium text-muted-foreground">Subsidy</p>
-							<p className="text-sm">
-								<BitcoinValue value={blockStats.subsidy / 100000000} />
-							</p>
-						</div>
-						<div>
-							<p className="text-sm font-medium text-muted-foreground">Total Output</p>
-							<p className="text-sm">
-								<BitcoinValue value={blockStats.total_out / 100000000} />
-							</p>
-						</div>
-						<div>
-							<p className="text-sm font-medium text-muted-foreground">Average Fee</p>
-							<p className="text-sm">
-								<BitcoinValue value={blockStats.avgfee / 100000000} />
-							</p>
-						</div>
-						<div>
-							<p className="text-sm font-medium text-muted-foreground">Average Transaction Size</p>
-							<p className="text-sm">{formatNumber(blockStats.avgtxsize)} bytes</p>
-						</div>
-						<div>
-							<p className="text-sm font-medium text-muted-foreground">Inputs/Outputs</p>
-							<p className="text-sm">
-								{formatNumber(blockStats.ins)} / {formatNumber(blockStats.outs)}
-							</p>
+							<p className="text-sm font-medium text-muted-foreground">Confirmations</p>
+							<p className="text-sm">{formatNumber(block.confirmations)}</p>
 						</div>
 					</div>
 				</CardContent>
@@ -143,7 +121,7 @@ export default function BlockPage({ params }: BlockPageProps) {
 							<div className="hidden md:block">Index</div>
 						</div>
 						<div className="divide-y">
-							{block.tx.slice(0, 10).map((txid, index) => (
+							{block.tx.slice(0, 15).map((txid, index) => (
 								<div key={txid} className="grid grid-cols-[1fr_auto] gap-4 p-4">
 									<div className="font-mono text-xs md:text-sm truncate max-w-[300px]">
 										<Link href={`/tx/${txid}`} className="hover:text-primary">
@@ -153,8 +131,8 @@ export default function BlockPage({ params }: BlockPageProps) {
 									<div className="hidden md:block">{index}</div>
 								</div>
 							))}
-							{block.tx.length > 10 && (
-								<div className="text-center text-sm text-muted-foreground p-4">And {block.tx.length - 10} more transactions...</div>
+							{block.tx.length > 15 && (
+								<div className="text-center text-sm text-muted-foreground p-4">And {block.tx.length - 15} more transactions...</div>
 							)}
 						</div>
 					</div>

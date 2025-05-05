@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Blocks, Network, Database, Clock } from "lucide-react"
 import { cookies } from "next/headers"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
+import { getLatestBlocks } from "@/lib/block-actions"
 
 async function getBitcoinInfo() {
 	const cookieStore = await cookies()
@@ -39,40 +40,10 @@ async function getBitcoinInfo() {
 	}
 }
 
-async function getLatestBlocks() {
-	const cookieStore = await cookies()
-	const token = cookieStore.get("accessToken")?.value
-
-	if (!token) {
-		return { blocks: [] }
-	}
-
-	try {
-		// Use our internal API route
-		const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/blocks?pageSize=10`, {
-			cache: "no-store",
-			headers: {
-				Authorization: `Bearer ${token}`
-			}
-		})
-
-		if (!res.ok) {
-			console.error("Failed to fetch blocks:", await res.text())
-			return { blocks: [] }
-		}
-
-		const data = await res.json()
-		return data
-	} catch (error) {
-		console.error("Error fetching blocks:", error)
-		return { blocks: [] }
-	}
-}
-
 // Dashboard content component
 async function DashboardContent() {
 	const { blockchain, network, mempool } = await getBitcoinInfo()
-	const { blocks } = await getLatestBlocks()
+	const { blocks } = await getLatestBlocks(10)
 
 	// If no data, show login prompt
 	if (!blockchain || !network || !mempool) {
