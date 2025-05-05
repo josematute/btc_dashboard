@@ -1,9 +1,10 @@
 'use server'
 
 import { z } from 'zod'
+import { UserAndCredentials, ApiError } from './types'
 
 const LoginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  username: z.string().min(2, { message: "Username must be at least 2 characters" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 })
 
@@ -15,11 +16,13 @@ const SignupSchema = z.object({
 
 export type LoginFormState = {
   errors?: {
-    email?: string[];
+    username?: string[];
     password?: string[];
     _form?: string[];
   };
   message?: string;
+  success?: boolean;
+  userData?: UserAndCredentials;
 }
 
 export type SignupFormState = {
@@ -30,12 +33,13 @@ export type SignupFormState = {
     _form?: string[];
   };
   message?: string;
+  success?: boolean;
 }
 
 export async function loginAction(prevState: LoginFormState, formData: FormData): Promise<LoginFormState> {
   // Validate form fields
   const validatedFields = LoginSchema.safeParse({
-    email: formData.get('email'),
+    username: formData.get('username'),
     password: formData.get('password'),
   })
 
@@ -44,25 +48,74 @@ export async function loginAction(prevState: LoginFormState, formData: FormData)
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Missing Fields. Failed to login.',
+      success: false
     }
   }
 
-  const { email, password } = validatedFields.data
+  const { username, password } = validatedFields.data
 
-  // Simulate a 3-second wait
-  console.log('Login attempt started, waiting 3 seconds...')
-  await new Promise(resolve => setTimeout(resolve, 3000))
+  // Log the attempt
+  console.log('Login attempt started with username:', username)
 
-  // Log the details
-  console.log('Login attempt completed with:', {
-    email,
-    password,
-    timestamp: new Date().toISOString()
-  })
+  try {
+    // Get the server URL from environment variable
+    const serverUrl = process.env.BTC_SERVER_URL || 'http://localhost:8080/'
+    const loginUrl = `${serverUrl}api/v1/auth/login`
 
-  // In a real app, you would authenticate the user here
-  return {
-    message: 'Login successful!',
+    console.log(`Making login request to: ${loginUrl}`)
+
+    // Make the request to the server
+    const response = await fetch(loginUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    })
+
+    // Parse the JSON response
+    const data = await response.json()
+
+    // Log the response for debugging
+    console.log('Login response status:', response.status)
+    console.log('Login response body:', JSON.stringify(data, null, 2))
+
+    // Check if login was successful
+    if (!response.ok) {
+      const errorData = data as ApiError
+      return {
+        message: errorData.message || 'Login failed. Please check your credentials.',
+        success: false
+      }
+    }
+
+    // Login successful
+    const userData = data as UserAndCredentials
+
+    // Log authentication data
+    console.log('Authentication successful:')
+    console.log('User ID:', userData.user.id)
+    console.log('Username:', userData.user.username)
+    console.log('Token:', userData.token.substring(0, 20) + '...')
+    console.log('Refresh:', userData.refresh.substring(0, 20) + '...')
+
+    return {
+      message: `Welcome back, ${userData.user.name || userData.user.username}!`,
+      success: true,
+      userData: userData
+    }
+  } catch (error) {
+    // Log the error
+    console.error('Login error:', error)
+
+    // Return an error message
+    return {
+      message: 'An error occurred while logging in. Please try again.',
+      success: false
+    }
   }
 }
 
@@ -79,6 +132,7 @@ export async function signupAction(prevState: SignupFormState, formData: FormDat
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Missing Fields. Failed to create account.',
+      success: false
     }
   }
 
@@ -99,5 +153,6 @@ export async function signupAction(prevState: SignupFormState, formData: FormDat
   // In a real app, you would create the user here
   return {
     message: 'Account created successfully!',
+    success: true
   }
 } 

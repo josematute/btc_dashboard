@@ -10,32 +10,48 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { loginAction } from "@/lib/actions"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
-	email: z.string().email({ message: "Please enter a valid email address" }),
+	username: z.string().min(2, { message: "Username must be at least 2 characters" }),
 	password: z.string().min(6, { message: "Password must be at least 6 characters" })
 })
 
 export default function LoginPage() {
+	const router = useRouter()
 	const [state, formAction, isPending] = useActionState(loginAction, {
 		message: "",
-		errors: {}
+		errors: {},
+		success: false
 	})
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			email: "",
+			username: "",
 			password: ""
 		}
 	})
+
+	// If login is successful, redirect to dashboard
+	useEffect(() => {
+		if (state.success) {
+			// Redirect after a short delay to allow the user to see the success message
+			const redirectTimer = setTimeout(() => {
+				router.push("/")
+			}, 1500)
+
+			return () => clearTimeout(redirectTimer)
+		}
+	}, [state.success, router])
 
 	return (
 		<div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)]">
 			<Card className="w-full max-w-md">
 				<CardHeader className="space-y-1">
 					<CardTitle className="text-2xl font-bold">Login</CardTitle>
-					<CardDescription>Enter your email and password to login to your account</CardDescription>
+					<CardDescription>Enter your username and password to login to your account</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -48,12 +64,12 @@ export default function LoginPage() {
 							}}>
 							<FormField
 								control={form.control}
-								name="email"
+								name="username"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Email</FormLabel>
+										<FormLabel>Username</FormLabel>
 										<FormControl>
-											<Input placeholder="m@example.com" {...field} name="email" />
+											<Input placeholder="johndoe" {...field} name="username" />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -77,7 +93,16 @@ export default function LoginPage() {
 									</FormItem>
 								)}
 							/>
-							{state.message && <p className={`text-sm ${state.errors?._form ? "text-destructive" : "text-green-500"}`}>{state.message}</p>}
+							{state.message && (
+								<div
+									className={`p-3 rounded-md text-sm ${
+										state.success
+											? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+											: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+									}`}>
+									{state.message}
+								</div>
+							)}
 							<Button type="submit" className="w-full" disabled={isPending}>
 								{isPending ? "Logging in..." : "Login"}
 							</Button>

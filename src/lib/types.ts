@@ -175,3 +175,22 @@ export interface Address {
   txCount: number
 }
 
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+}
+
+export interface UserAndCredentials {
+  user: User;
+  token: string;
+  refresh: string;
+}
+
+export interface ApiError {
+  message: string;
+  status?: number;
+  errors?: Record<string, string[]>;
+}
+
