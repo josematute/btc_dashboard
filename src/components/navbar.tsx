@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
+import { UnitSelector } from "@/components/unit-selector"
 
 interface NavbarProps {
 	isLoggedIn?: boolean
@@ -42,6 +43,7 @@ export function Navbar({ isLoggedIn = false, onLogout = () => {} }: NavbarProps)
 				<div className="ml-auto flex items-center gap-2">
 					{isLoggedIn ? (
 						<div className="flex items-center gap-4">
+							<UnitSelector />
 							<span className="text-sm">Welcome, {username}</span>
 							<Button onClick={onLogout} variant="outline">
 								Log out

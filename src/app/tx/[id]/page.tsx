@@ -1,19 +1,29 @@
-"use client"
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { mockTransactionDetail } from "@/lib/mock-data"
 import { formatBytes, formatNumber, formatDate, shortenHash } from "@/lib/utils"
 import Link from "next/link"
 import { BitcoinValue } from "@/components/bitcoin-value"
 import { ArrowLeft, Hash, ArrowDownUp, ArrowRight, CreditCard } from "lucide-react"
+import { getTransaction } from "@/lib/transaction-actions"
+import { notFound } from "next/navigation"
+import { Transaction, TransactionInput, TransactionOutput } from "@/lib/types"
 
-export default function TransactionPage() {
-	// In a real app, we would fetch the transaction data based on the ID
-	// For now, we'll just use our mock data
-	const tx = mockTransactionDetail
+interface TransactionPageProps {
+	params: {
+		id: string
+	}
+}
+
+export default async function TransactionPage({ params }: TransactionPageProps) {
+	// Fetch real transaction data
+	const tx = (await getTransaction(params.id)) as Transaction
+
+	// If transaction not found, show 404
+	if (!tx) {
+		notFound()
+	}
 
 	// Calculate total input and output values
-	const totalOutput = tx.vout.reduce((sum, output) => sum + output.value, 0)
+	const totalOutput = tx.vout.reduce((sum: number, output: TransactionOutput) => sum + output.value, 0)
 
 	return (
 		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
@@ -43,7 +53,7 @@ export default function TransactionPage() {
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Included in Block</p>
 								<p className="text-sm font-mono">
-									<Link href={`/block/${tx.status?.block_height}`} className="hover:text-primary">
+									<Link href={`/block/${tx.status?.block_height || ""}`} className="hover:text-primary">
 										{shortenHash(tx.blockhash, 16)}
 									</Link>
 								</p>
@@ -134,15 +144,21 @@ export default function TransactionPage() {
 								<div className="font-medium text-sm hidden md:block">Sequence</div>
 							</div>
 							<div className="divide-y">
-								{tx.vin.map((input, index) => (
+								{tx.vin.map((input: TransactionInput, index: number) => (
 									<div key={index} className="grid grid-cols-[2fr_1fr_2fr_1fr] p-3 items-center">
 										<div className="font-mono text-xs truncate">
-											<Link href={`/tx/${input.txid}`} className="hover:text-primary">
-												{shortenHash(input.txid, 8)}
-											</Link>
+											{input.txid ? (
+												<Link href={`/tx/${input.txid}`} className="hover:text-primary">
+													{shortenHash(input.txid, 8)}
+												</Link>
+											) : (
+												<span className="text-muted-foreground">Coinbase</span>
+											)}
 										</div>
 										<div>{input.vout}</div>
-										<div className="hidden md:block font-mono text-xs truncate">{shortenHash(input.scriptSig.hex, 8)}</div>
+										<div className="hidden md:block font-mono text-xs truncate">
+											{input.scriptSig?.hex ? shortenHash(input.scriptSig.hex, 8) : "N/A"}
+										</div>
 										<div className="hidden md:block">{input.sequence}</div>
 									</div>
 								))}
@@ -163,7 +179,7 @@ export default function TransactionPage() {
 								<div className="font-medium text-sm text-right">Value</div>
 							</div>
 							<div className="divide-y">
-								{tx.vout.map((output) => (
+								{tx.vout.map((output: TransactionOutput) => (
 									<div key={output.n} className="grid grid-cols-[1fr_2fr_1fr_1fr] p-3 items-center">
 										<div>{output.n}</div>
 										<div className="font-mono text-xs truncate">
@@ -197,20 +213,22 @@ export default function TransactionPage() {
 				</CardContent>
 			</Card>
 
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<CreditCard className="h-5 w-5" />
-						<span>Raw Transaction</span>
-					</CardTitle>
-					<CardDescription>Raw transaction data</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="bg-muted p-4 rounded-md overflow-x-auto">
-						<pre className="text-xs font-mono whitespace-pre-wrap break-all">{tx.hex}</pre>
-					</div>
-				</CardContent>
-			</Card>
+			{tx.hex && (
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<CreditCard className="h-5 w-5" />
+							<span>Raw Transaction</span>
+						</CardTitle>
+						<CardDescription>Raw transaction data</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="bg-muted p-4 rounded-md overflow-x-auto">
+							<pre className="text-xs font-mono whitespace-pre-wrap break-all">{tx.hex}</pre>
+						</div>
+					</CardContent>
+				</Card>
+			)}
 		</div>
 	)
 }

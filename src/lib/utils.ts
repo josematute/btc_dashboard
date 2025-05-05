@@ -36,7 +36,8 @@ export function formatDate(timestamp: number) {
   })
 }
 
-export function shortenHash(hash: string, length = 8) {
+export function shortenHash(hash?: string, length = 8) {
+  if (!hash) return "Unknown";
   return `${hash.substring(0, length)}...${hash.substring(hash.length - length)}`
 }
 

@@ -130,41 +130,44 @@ export interface Transaction {
   vsize: number
   weight: number
   locktime: number
-  vin: Vin[]
-  vout: Vout[]
-  hex: string
+  vin: TransactionInput[]
+  vout: TransactionOutput[]
+  hex?: string
   blockhash?: string
   confirmations?: number
   time?: number
   blocktime?: number
-  fee?: number
   status?: {
     confirmed: boolean
-    block_height: number
-    block_hash: string
-    block_time: number
+    block_height?: number
+    block_hash?: string
+    block_time?: number
   }
+  fee?: number
 }
 
-export interface Vin {
-  txid: string
+export interface TransactionInput {
+  txid?: string
   vout: number
-  scriptSig: {
+  scriptSig?: {
     asm: string
     hex: string
   }
-  txinwitness?: string[]
   sequence: number
+  witness?: string[]
+  prevout?: TransactionOutput
+  coinbase?: string
 }
 
-export interface Vout {
+export interface TransactionOutput {
   value: number
   n: number
   scriptPubKey: {
     asm: string
     hex: string
-    address?: string
     type: string
+    address?: string
+    addresses?: string[]
   }
 }
 

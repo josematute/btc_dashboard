@@ -1,4 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getLatestBlocks } from "@/lib/block-actions"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
 
