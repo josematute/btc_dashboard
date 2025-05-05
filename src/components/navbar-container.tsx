@@ -32,16 +32,39 @@ export function NavbarContainer() {
 		}
 	}, [pathname])
 
-	const handleLogout = () => {
-		// Clear cookies (would normally call a logout endpoint)
-		document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
-		document.cookie = "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
-		document.cookie = "user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+	const handleLogout = async () => {
+		try {
+			// Call the logout API route
+			const response = await fetch("/api/auth/logout", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
 
-		setIsLoggedIn(false)
-
-		// Redirect to home page
-		router.push("/")
+			if (response.ok) {
+				console.log("Logged out successfully")
+				setIsLoggedIn(false)
+				// Redirect to login page
+				router.push("/login")
+			} else {
+				console.error("Logout failed:", await response.text())
+				// Try client-side fallback cookie clearing if server logout fails
+				document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+				document.cookie = "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+				document.cookie = "user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+				setIsLoggedIn(false)
+				router.push("/login")
+			}
+		} catch (error) {
+			console.error("Error during logout:", error)
+			// Fallback client-side cookie clearing
+			document.cookie = "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+			document.cookie = "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+			document.cookie = "user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+			setIsLoggedIn(false)
+			router.push("/login")
+		}
 	}
 
 	if (isAuthPage) {
