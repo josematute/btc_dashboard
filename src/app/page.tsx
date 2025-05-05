@@ -4,100 +4,10 @@ import { mockBlockchainInfo, mockNetworkInfo, mockMempoolInfo, mockBlocks } from
 import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
+import Image from "next/image"
+import { Blocks, Network, Database, Clock } from "lucide-react"
 
-// We're using dynamic imports for the icons since we couldn't install lucide-react
 export default function Home() {
-	// Using placeholder SVGs instead of Lucide icons
-	const BitcoinIcon = () => (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className="h-4 w-4">
-			<path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path>
-		</svg>
-	)
-
-	const BlocksIcon = () => (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className="h-4 w-4">
-			<rect x="2" y="2" width="8" height="8" rx="2"></rect>
-			<rect x="14" y="2" width="8" height="8" rx="2"></rect>
-			<rect x="2" y="14" width="8" height="8" rx="2"></rect>
-			<rect x="14" y="14" width="8" height="8" rx="2"></rect>
-		</svg>
-	)
-
-	const NetworkIcon = () => (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className="h-4 w-4">
-			<circle cx="12" cy="12" r="1"></circle>
-			<path d="M7.5 4.2c-.3-.5-.9-.7-1.3-.4C3.9 5.5 2.3 8.1 2 11c-.1.5.4 1 1 1h2c.6 0 1-.4 1-1 0-1.1.3-2.1.9-3 .1-.1.1-.2.1-.3 0-.4-.2-.8-.5-1.1z"></path>
-			<path d="M17.5 4.2c.3-.5.9-.7 1.3-.4C21.1 5.5 22.7 8.1 23 11c.1.5-.4 1-1 1h-2c-.6 0-1-.4-1-1 0-1.1-.3-2.1-.9-3-.1-.1-.1-.2-.1-.3 0-.4.2-.8.5-1.1z"></path>
-			<path d="M4.2 17.5c-.5-.3-.7-.9-.4-1.3C5.5 13.9 8.1 12.3 11 12c.5-.1 1 .4 1 1v2c0 .6-.4 1-1 1-1.1 0-2.1.3-3 .9-.1.1-.2.1-.3.1-.4 0-.8-.2-1.1-.5z"></path>
-			<path d="M19.8 17.5c.5-.3.7-.9.4-1.3-1.7-2.3-4.3-3.9-7.2-4.2-.5-.1-1 .4-1 1v2c0 .6.4 1 1 1 1.1 0 2.1.3 3 .9.1.1.2.1.3.1.4 0 .8-.2 1.1-.5z"></path>
-		</svg>
-	)
-
-	const DatabaseIcon = () => (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className="h-4 w-4">
-			<ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-			<path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-			<path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path>
-		</svg>
-	)
-
-	const ClockIcon = () => (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className="h-5 w-5">
-			<circle cx="12" cy="12" r="10"></circle>
-			<polyline points="12 6 12 12 16 14"></polyline>
-		</svg>
-	)
-
 	return (
 		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
 			<div>
@@ -109,7 +19,7 @@ export default function Home() {
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
-						<BlocksIcon />
+						<Blocks className="h-4 w-4" />
 						<span>Latest Blocks</span>
 					</CardTitle>
 					<CardDescription>
@@ -126,24 +36,29 @@ export default function Home() {
 
 			{/* Summary Stats */}
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-				<StatCard title="Chain" value={mockBlockchainInfo.chain.toUpperCase()} description="Current blockchain" icon={<BitcoinIcon />} />
+				<StatCard
+					title="Chain"
+					value={mockBlockchainInfo.chain.toUpperCase()}
+					description="Current blockchain"
+					icon={<Image src="/Bitcoin.svg.png" alt="Bitcoin" width={16} height={16} />}
+				/>
 				<StatCard
 					title="Block Height"
 					value={formatNumber(mockBlockchainInfo.blocks)}
 					description={`Last updated: ${formatDate(mockBlockchainInfo.time)}`}
-					icon={<BlocksIcon />}
+					icon={<Blocks className="h-4 w-4" />}
 				/>
 				<StatCard
 					title="Connections"
 					value={mockNetworkInfo.connections}
 					description={`Out: ${mockNetworkInfo.connections_out}, In: ${mockNetworkInfo.connections_in}`}
-					icon={<NetworkIcon />}
+					icon={<Network className="h-4 w-4" />}
 				/>
 				<StatCard
 					title="Mempool"
 					value={mockMempoolInfo.size}
 					description={`${formatBytes(mockMempoolInfo.bytes)} in pending transactions`}
-					icon={<DatabaseIcon />}
+					icon={<Database className="h-4 w-4" />}
 				/>
 			</div>
 
@@ -151,7 +66,7 @@ export default function Home() {
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
-							<ClockIcon />
+							<Clock className="h-5 w-5" />
 							<span>Blockchain Stats</span>
 						</CardTitle>
 						<CardDescription>Current state of the Bitcoin blockchain</CardDescription>
