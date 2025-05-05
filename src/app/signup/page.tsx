@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -10,8 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Eye, EyeOff } from "lucide-react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { signupAction } from "@/lib/actions"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
@@ -24,11 +23,9 @@ const formSchema = z.object({
 export default function SignupPage() {
 	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
-	const [state, formAction, isPending] = useActionState(signupAction, {
-		message: "",
-		errors: {},
-		success: false
-	})
+	const [isLoading, setIsLoading] = useState(false)
+	const [message, setMessage] = useState("")
+	const [isSuccess, setIsSuccess] = useState(false)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -40,9 +37,43 @@ export default function SignupPage() {
 		}
 	})
 
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		setIsLoading(true)
+		setMessage("")
+
+		try {
+			const response = await fetch("/api/auth/signup", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(values)
+			})
+
+			const data = await response.json()
+
+			if (!response.ok) {
+				setMessage(data.message || "Signup failed. Please try again.")
+				setIsSuccess(false)
+			} else {
+				setMessage(data.message || "Account created successfully!")
+				setIsSuccess(true)
+
+				// Clear the form
+				form.reset()
+			}
+		} catch (error) {
+			console.error("Signup error:", error)
+			setMessage("An error occurred while creating your account. Please try again.")
+			setIsSuccess(false)
+		} finally {
+			setIsLoading(false)
+		}
+	}
+
 	// If signup is successful, redirect to dashboard
 	useEffect(() => {
-		if (state.success) {
+		if (isSuccess) {
 			// Redirect after a short delay to allow the user to see the success message
 			const redirectTimer = setTimeout(() => {
 				router.push("/") // Go to dashboard instead of login
@@ -50,7 +81,7 @@ export default function SignupPage() {
 
 			return () => clearTimeout(redirectTimer)
 		}
-	}, [state.success, router])
+	}, [isSuccess, router])
 
 	return (
 		<div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)]">
@@ -61,13 +92,7 @@ export default function SignupPage() {
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
-						<form
-							action={formAction}
-							className="space-y-4"
-							onSubmit={() => {
-								// React will handle the form submission
-								form.trigger() // Trigger validation
-							}}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 							<FormField
 								control={form.control}
 								name="name"
@@ -75,7 +100,7 @@ export default function SignupPage() {
 									<FormItem>
 										<FormLabel>Name</FormLabel>
 										<FormControl>
-											<Input placeholder="Hal Finney" {...field} name="name" />
+											<Input placeholder="Hal Finney" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -88,7 +113,7 @@ export default function SignupPage() {
 									<FormItem>
 										<FormLabel>Email</FormLabel>
 										<FormControl>
-											<Input placeholder="hal@finney.org" {...field} name="email" />
+											<Input placeholder="hal@finney.org" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -101,7 +126,7 @@ export default function SignupPage() {
 									<FormItem>
 										<FormLabel>Username</FormLabel>
 										<FormControl>
-											<Input placeholder="halfinney" {...field} name="username" />
+											<Input placeholder="halfinney" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -115,7 +140,7 @@ export default function SignupPage() {
 										<FormLabel>Password</FormLabel>
 										<FormControl>
 											<div className="relative">
-												<Input type={showPassword ? "text" : "password"} {...field} name="password" placeholder="********" />
+												<Input type={showPassword ? "text" : "password"} {...field} placeholder="********" />
 												<Button
 													type="button"
 													variant="ghost"
@@ -135,18 +160,18 @@ export default function SignupPage() {
 									</FormItem>
 								)}
 							/>
-							{state.message && (
+							{message && (
 								<div
 									className={`p-3 rounded-md text-sm ${
-										state.success
+										isSuccess
 											? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
 											: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
 									}`}>
-									{state.message}
+									{message}
 								</div>
 							)}
-							<Button type="submit" className="w-full" disabled={isPending}>
-								{isPending ? "Creating account..." : "Create account"}
+							<Button type="submit" className="w-full" disabled={isLoading}>
+								{isLoading ? "Creating account..." : "Create account"}
 							</Button>
 						</form>
 					</Form>

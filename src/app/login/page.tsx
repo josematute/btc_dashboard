@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { loginAction } from "@/lib/actions"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 
@@ -22,11 +21,9 @@ const formSchema = z.object({
 export default function LoginPage() {
 	const router = useRouter()
 	const [showPassword, setShowPassword] = useState(false)
-	const [state, formAction, isPending] = useActionState(loginAction, {
-		message: "",
-		errors: {},
-		success: false
-	})
+	const [isLoading, setIsLoading] = useState(false)
+	const [message, setMessage] = useState("")
+	const [isSuccess, setIsSuccess] = useState(false)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -36,9 +33,43 @@ export default function LoginPage() {
 		}
 	})
 
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		setIsLoading(true)
+		setMessage("")
+
+		try {
+			const response = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(values)
+			})
+
+			const data = await response.json()
+
+			if (!response.ok) {
+				setMessage(data.message || "Login failed. Please try again.")
+				setIsSuccess(false)
+			} else {
+				setMessage(data.message || "Login successful!")
+				setIsSuccess(true)
+
+				// Clear the form
+				form.reset()
+			}
+		} catch (error) {
+			console.error("Login error:", error)
+			setMessage("An error occurred while logging in. Please try again.")
+			setIsSuccess(false)
+		} finally {
+			setIsLoading(false)
+		}
+	}
+
 	// If login is successful, redirect to dashboard
 	useEffect(() => {
-		if (state.success) {
+		if (isSuccess) {
 			// Redirect after a short delay to allow the user to see the success message
 			const redirectTimer = setTimeout(() => {
 				router.push("/")
@@ -46,7 +77,7 @@ export default function LoginPage() {
 
 			return () => clearTimeout(redirectTimer)
 		}
-	}, [state.success, router])
+	}, [isSuccess, router])
 
 	return (
 		<div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)]">
@@ -57,13 +88,7 @@ export default function LoginPage() {
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
-						<form
-							action={formAction}
-							className="space-y-4"
-							onSubmit={() => {
-								// React will handle the form submission
-								form.trigger() // Trigger validation
-							}}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 							<FormField
 								control={form.control}
 								name="username"
@@ -71,7 +96,7 @@ export default function LoginPage() {
 									<FormItem>
 										<FormLabel>Username</FormLabel>
 										<FormControl>
-											<Input placeholder="halfinney" {...field} name="username" />
+											<Input placeholder="halfinney" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -90,7 +115,7 @@ export default function LoginPage() {
 										</div>
 										<FormControl>
 											<div className="relative">
-												<Input type={showPassword ? "text" : "password"} {...field} name="password" placeholder="********" />
+												<Input type={showPassword ? "text" : "password"} {...field} placeholder="********" />
 												<Button
 													type="button"
 													variant="ghost"
@@ -110,18 +135,18 @@ export default function LoginPage() {
 									</FormItem>
 								)}
 							/>
-							{state.message && (
+							{message && (
 								<div
 									className={`p-3 rounded-md text-sm ${
-										state.success
+										isSuccess
 											? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
 											: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
 									}`}>
-									{state.message}
+									{message}
 								</div>
 							)}
-							<Button type="submit" className="w-full" disabled={isPending}>
-								{isPending ? "Logging in..." : "Login"}
+							<Button type="submit" className="w-full" disabled={isLoading}>
+								{isLoading ? "Logging in..." : "Login"}
 							</Button>
 						</form>
 					</Form>

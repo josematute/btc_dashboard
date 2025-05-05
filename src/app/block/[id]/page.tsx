@@ -1,5 +1,4 @@
-"use client"
-
+// This is now a Server Component
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { mockBlock, mockBlockStats } from "@/lib/mock-data"
 import { formatBytes, formatNumber, formatDate, shortenHash } from "@/lib/utils"

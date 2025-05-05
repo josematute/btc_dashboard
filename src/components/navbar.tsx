@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
 
 interface NavbarProps {
 	isLoggedIn?: boolean
@@ -8,6 +9,29 @@ interface NavbarProps {
 }
 
 export function Navbar({ isLoggedIn = false, onLogout = () => {} }: NavbarProps) {
+	// Get user info from cookie on client side
+	const [username, setUsername] = useState("")
+
+	useEffect(() => {
+		// If logged in, try to get username from cookie
+		if (isLoggedIn) {
+			const userCookie = document.cookie
+				.split("; ")
+				.find((row) => row.startsWith("user="))
+				?.split("=")[1]
+
+			if (userCookie) {
+				try {
+					const userData = JSON.parse(decodeURIComponent(userCookie))
+					setUsername(userData.name || userData.username || "User")
+				} catch (error) {
+					console.error("Error parsing user cookie:", error)
+					setUsername("User")
+				}
+			}
+		}
+	}, [isLoggedIn])
+
 	return (
 		<header className="border-b">
 			<div className="flex h-16 items-center px-4 max-w-6xl mx-auto">
@@ -17,9 +41,12 @@ export function Navbar({ isLoggedIn = false, onLogout = () => {} }: NavbarProps)
 				</Link>
 				<div className="ml-auto flex items-center gap-2">
 					{isLoggedIn ? (
-						<Button onClick={onLogout} variant="outline">
-							Log out
-						</Button>
+						<div className="flex items-center gap-4">
+							<span className="text-sm">Welcome, {username}</span>
+							<Button onClick={onLogout} variant="outline">
+								Log out
+							</Button>
+						</div>
 					) : (
 						<>
 							<Link href="/login">
