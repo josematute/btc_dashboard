@@ -7,6 +7,7 @@ import { Block } from "./types"
 export type BlockWithTxCount = Block & { txCount: number }
 
 export async function getMoreBlocks(page: number, pageSize: number): Promise<BlockWithTxCount[]> {
+  console.log("getMoreBlocks", page, pageSize)
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get("accessToken")?.value
@@ -17,7 +18,7 @@ export async function getMoreBlocks(page: number, pageSize: number): Promise<Blo
     }
 
     // Use the same API route that works for the first fetch
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/blocks?page=${page}&pageSize=${pageSize}`, {
+    const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/blocks?page=${page}&pageSize=${pageSize}`, {
       cache: "no-store",
       headers: {
         Authorization: `Bearer ${token}`
@@ -44,6 +45,7 @@ export async function getMoreBlocks(page: number, pageSize: number): Promise<Blo
 }
 
 export async function getBlock(blockId: string): Promise<Block | null> {
+  console.log("getBlock", blockId)
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get("accessToken")?.value
@@ -54,7 +56,7 @@ export async function getBlock(blockId: string): Promise<Block | null> {
     }
 
     // Use our internal API route
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/block/${blockId}`, {
+    const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/block/${blockId}`, {
       cache: "no-store",
       headers: {
         Authorization: `Bearer ${token}`
@@ -75,6 +77,7 @@ export async function getBlock(blockId: string): Promise<Block | null> {
 }
 
 export async function getLatestBlocks(pageSize: number = 10): Promise<{ blocks: BlockWithTxCount[] }> {
+  console.log("getLatestBlocks", pageSize)
   const cookieStore = await cookies()
   const token = cookieStore.get("accessToken")?.value
 
@@ -84,12 +87,14 @@ export async function getLatestBlocks(pageSize: number = 10): Promise<{ blocks: 
 
   try {
     // Use our internal API route
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/blocks?pageSize=${pageSize}`, {
+    const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/blocks?pageSize=${pageSize}`, {
       cache: "no-store",
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
+
+    console.log("res", res)
 
     if (!res.ok) {
       console.error("Failed to fetch blocks:", await res.text())

@@ -14,7 +14,7 @@ export async function getTransaction(txid: string): Promise<Transaction | null> 
     }
 
     // Use our internal API route
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/tx/${txid}`, {
+    const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/tx/${txid}`, {
       cache: "no-store",
       headers: {
         Authorization: `Bearer ${token}`

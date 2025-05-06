@@ -7,15 +7,9 @@ import { getTransaction } from "@/lib/transaction-actions"
 import { notFound } from "next/navigation"
 import { Transaction, TransactionInput, TransactionOutput } from "@/lib/types"
 
-interface TransactionPageProps {
-	params: {
-		id: string
-	}
-}
-
-export default async function TransactionPage({ params }: TransactionPageProps) {
+export default async function TransactionPage({ params }: { params: Promise<{ id: string }> }) {
 	// Fetch real transaction data
-	const txid = params.id
+	const txid = (await params).id
 	const tx = (await getTransaction(txid)) as Transaction
 
 	// If transaction not found, show 404

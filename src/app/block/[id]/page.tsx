@@ -7,20 +7,14 @@ import { getBlock } from "@/lib/block-actions"
 import { notFound } from "next/navigation"
 import { Block } from "@/lib/types"
 
-interface BlockPageProps {
-	params: {
-		id: string
-	}
-}
-
 // Add nextblockhash to the Block type
 type BlockWithNextBlock = Block & {
 	nextblockhash?: string
 }
 
-export default async function BlockPage({ params }: BlockPageProps) {
+export default async function BlockPage({ params }: { params: Promise<{ id: string }> }) {
 	// Fetch the real block data using the ID from params
-	const blockId = params.id
+	const blockId = (await params).id
 	const block = await getBlock(blockId)
 
 	// If no block was found, show the 404 page
