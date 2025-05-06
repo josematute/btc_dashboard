@@ -11,9 +11,6 @@ import { getLatestBlocks } from "@/lib/block-actions"
 async function getBitcoinInfo() {
 	const cookieStore = await cookies()
 	const token = cookieStore.get("accessToken")?.value
-
-	console.log("accessToken", token)
-
 	if (!token) {
 		return { blockchain: null, network: null, mempool: null }
 	}
