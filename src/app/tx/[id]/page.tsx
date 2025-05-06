@@ -15,7 +15,8 @@ interface TransactionPageProps {
 
 export default async function TransactionPage({ params }: TransactionPageProps) {
 	// Fetch real transaction data
-	const tx = (await getTransaction(params.id)) as Transaction
+	const txid = params.id
+	const tx = (await getTransaction(txid)) as Transaction
 
 	// If transaction not found, show 404
 	if (!tx) {

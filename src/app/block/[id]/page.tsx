@@ -19,16 +19,14 @@ type BlockWithNextBlock = Block & {
 }
 
 export default async function BlockPage({ params }: BlockPageProps) {
-	// Fetch the real block data
-	const block = await getBlock(params.id)
+	// Fetch the real block data using the ID from params
+	const blockId = params.id
+	const block = await getBlock(blockId)
 
 	// If no block was found, show the 404 page
 	if (!block) {
 		notFound()
 	}
-
-	// Log the block ID from params
-	console.log(`Block ID: ${params.id}`)
 
 	// Cast the block to include the optional nextblockhash field
 	const blockWithNext = block as BlockWithNextBlock

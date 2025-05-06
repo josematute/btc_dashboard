@@ -18,8 +18,15 @@ export async function GET(
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
 
+    // Make sure the BTC_SERVER_URL is set
+    const serverUrl = process.env.BTC_SERVER_URL
+    if (!serverUrl) {
+      console.error("[TX API] BTC_SERVER_URL is not defined")
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 })
+    }
+
     // Call the external API
-    const url = new URL(`http://localhost:8080/api/v1/btc/tx/${txid}`)
+    const url = new URL(`${serverUrl}/api/v1/btc/tx/${txid}`)
 
     console.log(`[TX API] Calling external API: ${url.toString()}`)
 

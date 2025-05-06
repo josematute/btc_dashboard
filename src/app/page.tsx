@@ -20,7 +20,7 @@ async function getBitcoinInfo() {
 
 	try {
 		// Use our internal API route
-		const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/btc/info`, {
+		const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/info`, {
 			cache: "no-store",
 			headers: {
 				Authorization: `Bearer ${token}`

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 
     console.log(`[Blocks API] Fetching blocks with pageSize=${pageSize}, page=${page}`)
 
-    const url = new URL("http://localhost:8080/api/v1/btc/blocks")
+    const url = new URL(`${process.env.BTC_SERVER_URL}/api/v1/btc/blocks`)
     url.searchParams.append("pageSize", pageSize)
     url.searchParams.append("page", page)
 

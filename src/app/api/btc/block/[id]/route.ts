@@ -19,7 +19,7 @@ export async function GET(
     }
 
     // Call the external API
-    const url = new URL(`http://localhost:8080/api/v1/btc/block/${blockId}`)
+    const url = new URL(`${process.env.BTC_SERVER_URL}/api/v1/btc/block/${blockId}`)
 
     console.log(`[Block API] Calling external API: ${url.toString()}`)
 

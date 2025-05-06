@@ -25,8 +25,8 @@ export async function POST(request: Request) {
     const { username, password } = validatedFields.data
 
     // Get the server URL from environment variable
-    const serverUrl = process.env.BTC_SERVER_URL || 'http://localhost:8080/'
-    const loginUrl = `${serverUrl}api/v1/auth/login`
+    const serverUrl = process.env.BTC_SERVER_URL
+    const loginUrl = `${serverUrl}/api/v1/auth/login`
 
     console.log(`Making login request to: ${loginUrl}`)
 
