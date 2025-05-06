@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
 
 export async function POST() {
   try {
@@ -8,20 +9,23 @@ export async function POST() {
       { status: 200 }
     )
 
+    // Get the cookies store
+    const cookieStore = await cookies()
+
     // Clear all the cookies by setting them with expires in the past
-    response.cookies.set("accessToken", "", {
+    cookieStore.set("accessToken", "", {
       httpOnly: true,
       expires: new Date(0), // Set expiry to the past
       path: "/"
     })
 
-    response.cookies.set("refreshToken", "", {
+    cookieStore.set("refreshToken", "", {
       httpOnly: true,
       expires: new Date(0), // Set expiry to the past
       path: "/"
     })
 
-    response.cookies.set("user", "", {
+    cookieStore.set("user", "", {
       httpOnly: false,
       expires: new Date(0), // Set expiry to the past
       path: "/"

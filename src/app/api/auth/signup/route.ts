@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
+import { cookies } from "next/headers"
 
 const SignupSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -78,25 +79,28 @@ export async function POST(request: Request) {
     // Create response with cookies
     const nextResponse = NextResponse.json(responseJson, { status: 201 })
 
-    // Set JWT cookies
-    nextResponse.cookies.set("accessToken", data.token, {
+    // Get the cookies store
+    const cookieStore = await cookies()
+
+    // Set JWT cookies using the cookies API
+    cookieStore.set("accessToken", data.token, {
       httpOnly: true,
       maxAge: 24 * 60 * 60, // 1 day
       path: "/",
       sameSite: "strict",
-      secure: process.env.NODE_ENV === "production"
+      secure: false
     })
 
-    nextResponse.cookies.set("refreshToken", data.refresh, {
+    cookieStore.set("refreshToken", data.refresh, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
       sameSite: "strict",
-      secure: process.env.NODE_ENV === "production"
+      secure: false
     })
 
     // Set a user cookie that is accessible to JavaScript
-    nextResponse.cookies.set("user", JSON.stringify({
+    cookieStore.set("user", JSON.stringify({
       id: data.user.id,
       name: data.user.name,
       username: data.user.username,
@@ -106,7 +110,7 @@ export async function POST(request: Request) {
       maxAge: 24 * 60 * 60, // 1 day
       path: "/",
       sameSite: "strict",
-      secure: process.env.NODE_ENV === "production"
+      secure: false
     })
 
     return nextResponse

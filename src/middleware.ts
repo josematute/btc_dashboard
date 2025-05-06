@@ -14,23 +14,23 @@ const protectedRoutes = [
 ]
 
 // Verify JWT token
-async function verifyToken(token: string) {
-  try {
-    // Import jose dynamically, better for edge runtime
-    const { jwtVerify } = await import('jose')
+// async function verifyToken(token: string) {
+//   try {
+//     // Import jose dynamically, better for edge runtime
+//     const { jwtVerify } = await import('jose')
 
-    // In a real application, you would verify the JWT against a proper secret
-    // For now, we're just checking if it exists and is properly formatted
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(process.env.JWT_SECRET || "bitcoin-dashboard-secret")
-    )
-    return payload
-  } catch (error) {
-    console.error("Token verification failed:", error)
-    return null
-  }
-}
+//     // In a real application, you would verify the JWT against a proper secret
+//     // For now, we're just checking if it exists and is properly formatted
+//     const { payload } = await jwtVerify(
+//       token,
+//       new TextEncoder().encode(process.env.JWT_SECRET || "bitcoin-dashboard-secret")
+//     )
+//     return payload
+//   } catch (error) {
+//     console.error("Token verification failed:", error)
+//     return null
+//   }
+// }
 
 export async function middleware(request: NextRequest) {
   // Get the pathname of the request
@@ -70,7 +70,7 @@ export async function middleware(request: NextRequest) {
   // If accessing a public route with a valid token, redirect to dashboard
   if (isPublicRoute && accessToken) {
     try {
-      const payload = await verifyToken(accessToken)
+      const payload = true
       if (payload) {
         console.log(`[Middleware] Redirecting to dashboard: authenticated user on public route ${path}`)
         return NextResponse.redirect(new URL("/", request.url))

@@ -94,8 +94,6 @@ export async function getLatestBlocks(pageSize: number = 10): Promise<{ blocks: 
       }
     })
 
-    console.log("res", res)
-
     if (!res.ok) {
       console.error("Failed to fetch blocks:", await res.text())
       return { blocks: [] }
