@@ -3,10 +3,7 @@
 import { cookies } from "next/headers"
 import { Block } from "./types"
 
-// Type for Block with txCount field
-export type BlockWithTxCount = Block & { txCount: number }
-
-export async function getMoreBlocks(page: number, pageSize: number): Promise<BlockWithTxCount[]> {
+export async function getMoreBlocks(page: number, pageSize: number): Promise<Block[]> {
   console.log("getMoreBlocks", page, pageSize)
   try {
     const cookieStore = await cookies()
@@ -76,7 +73,7 @@ export async function getBlock(blockId: string): Promise<Block | null> {
   }
 }
 
-export async function getLatestBlocks(pageSize: number = 10): Promise<{ blocks: BlockWithTxCount[] }> {
+export async function getLatestBlocks(pageSize: number = 10): Promise<{ blocks: Block[] }> {
   console.log("getLatestBlocks", pageSize)
   const cookieStore = await cookies()
   const token = cookieStore.get("accessToken")?.value

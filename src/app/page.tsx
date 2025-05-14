@@ -16,7 +16,6 @@ async function getBitcoinInfo() {
 	}
 
 	try {
-		// Use our internal API route
 		const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/info`, {
 			cache: "no-store",
 			headers: {

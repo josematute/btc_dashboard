@@ -6,16 +6,17 @@ import { BlockList } from "@/components/block-list"
 import { Button } from "@/components/ui/button"
 import { Blocks } from "lucide-react"
 import Link from "next/link"
-import { getMoreBlocks, BlockWithTxCount } from "@/lib/block-actions"
+import { getMoreBlocks } from "@/lib/block-actions"
 import { LoadingSpinner } from "./loading-spinner"
+import { Block } from "@/lib/types"
 
 interface LatestBlocksSectionProps {
-	initialBlocks: BlockWithTxCount[]
+	initialBlocks: Block[]
 	initialPageSize: number
 }
 
 export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBlocksSectionProps) {
-	const [blocks, setBlocks] = useState<BlockWithTxCount[]>(initialBlocks)
+	const [blocks, setBlocks] = useState<Block[]>(initialBlocks)
 	const [isLoading, setIsLoading] = useState(false)
 	const [page, setPage] = useState(1)
 	const pageSize = initialPageSize
@@ -47,8 +48,8 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 					<span>Latest Blocks</span>
 				</CardTitle>
 				<CardDescription>
-					The most recently mined blocks on the Bitcoin blockchain.{" "}
-					<Link href="/blocks" className="text-primary hover:underline">
+					The most recently mined blocks on the Bitcoin blockchain{" "}
+					<Link href="/blocks" className="text-primary hover:underline text-md font-semibold ml-2">
 						View all
 					</Link>
 				</CardDescription>

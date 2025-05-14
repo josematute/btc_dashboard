@@ -1,11 +1,12 @@
 import { shortenHash, formatDate } from "@/lib/utils"
-import { BlockWithTxCount } from "@/lib/block-actions"
+import { Block } from "@/lib/types"
 
 interface BlockListProps {
-	blocks: BlockWithTxCount[]
+	blocks: Block[]
 }
 
 export function BlockList({ blocks }: BlockListProps) {
+	console.log("blocks", blocks)
 	return (
 		<div className="space-y-4">
 			{blocks.map((block) => (
@@ -20,7 +21,7 @@ export function BlockList({ blocks }: BlockListProps) {
 						<p className="text-xs text-muted-foreground">{formatDate(block.time)}</p>
 					</div>
 					<div className="text-right">
-						<div className="text-sm font-medium">{block.txCount} txs</div>
+						<div className="text-sm font-medium">{block.nTx} txs</div>
 						<p className="text-xs text-muted-foreground">{(block.size / 1000000).toFixed(2)} MB</p>
 					</div>
 				</div>
