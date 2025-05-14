@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const formSchema = z.object({
 	username: z.string().min(2, { message: "Username must be at least 2 characters" }),
@@ -109,9 +110,16 @@ export default function LoginPage() {
 									<FormItem>
 										<div className="flex items-center justify-between">
 											<FormLabel>Password</FormLabel>
-											<Link href="/forgot-password" className="text-sm text-primary hover:underline">
-												Forgot password?
-											</Link>
+											<TooltipProvider>
+												<Tooltip>
+													<TooltipTrigger asChild>
+														<span className="text-sm text-muted-foreground cursor-not-allowed">Forgot password?</span>
+													</TooltipTrigger>
+													<TooltipContent>
+														<p>Coming soon</p>
+													</TooltipContent>
+												</Tooltip>
+											</TooltipProvider>
 										</div>
 										<FormControl>
 											<div className="relative">
