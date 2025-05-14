@@ -3,10 +3,12 @@ import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
-import { Blocks, Network, Database, Clock } from "lucide-react"
+import { Blocks, Network, Database, Clock, Info } from "lucide-react"
 import { cookies } from "next/headers"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
 import { getLatestBlocks } from "@/lib/block-actions"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { BitcoinValue } from "@/components/bitcoin-value"
 
 async function getBitcoinInfo() {
 	const cookieStore = await cookies()
@@ -107,11 +109,26 @@ async function DashboardContent() {
 						<CardDescription>Current state of the Bitcoin blockchain</CardDescription>
 					</CardHeader>
 					<CardContent className="grid gap-4">
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<p className="text-sm font-medium text-muted-foreground">Difficulty</p>
-								<p className="text-lg font-semibold">{formatNumber(blockchain.difficulty)}</p>
+						<div>
+							<div className="flex items-center gap-2">
+								<p className="text-sm font-medium text-muted-foreground">Difficulty Adjustment</p>
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Info className="h-4 w-4 text-muted-foreground" />
+										</TooltipTrigger>
+										<TooltipContent className="max-w-[300px]">
+											<p>
+												The current mining difficulty target. This number represents how difficult it is to find a hash below the target
+												value. Higher numbers mean more computational work is required to mine new blocks.
+											</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
 							</div>
+							<p className="text-lg font-semibold break-all">{formatNumber(blockchain.difficulty)}</p>
+						</div>
+						<div className="grid grid-cols-2 gap-4">
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Size on Disk</p>
 								<p className="text-lg font-semibold">{formatBytes(blockchain.size_on_disk)}</p>
@@ -122,7 +139,9 @@ async function DashboardContent() {
 							</div>
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Mempool Fee</p>
-								<p className="text-lg font-semibold">{mempool.total_fee?.toFixed(8)} BTC</p>
+								<p className="text-lg font-semibold">
+									<BitcoinValue value={mempool.total_fee || 0} />
+								</p>
 							</div>
 						</div>
 					</CardContent>
