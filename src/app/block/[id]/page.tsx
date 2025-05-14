@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatBytes, formatNumber, formatDate, shortenHash, copyToClipboard } from "@/lib/utils"
 import Link from "next/link"
-import { ArrowLeft, Hash, Database, Copy, CheckCircle2, AlertCircle } from "lucide-react"
+import { ArrowLeft, Hash, Copy, CheckCircle2, AlertCircle } from "lucide-react"
 import { getBlock } from "@/lib/block-actions"
 import { notFound } from "next/navigation"
 import { Block } from "@/lib/types"
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { use } from "react"
 import { Badge } from "@/components/ui/badge"
+import { BlockTxList } from "./block-tx-list"
 
 // Add nextblockhash to the Block type
 type BlockWithNextBlock = Block & {
@@ -180,38 +181,7 @@ export default function BlockPage({ params }: { params: Promise<{ id: string }> 
 				</CardContent>
 			</Card>
 
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<Database className="h-5 w-5" />
-						<span>Transactions</span>
-					</CardTitle>
-					<CardDescription>Transactions included in block #{block.height}</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="border rounded-md">
-						<div className="grid grid-cols-[1fr_auto] gap-4 p-4 font-medium border-b">
-							<div>Transaction ID</div>
-							<div className="hidden md:block">Index</div>
-						</div>
-						<div className="divide-y">
-							{block.tx.slice(0, 15).map((txid, index) => (
-								<div key={txid} className="grid grid-cols-[1fr_auto] gap-4 p-4">
-									<div className="font-mono text-xs md:text-sm truncate max-w-[300px]">
-										<Link href={`/tx/${txid}`} className="hover:text-primary">
-											{txid}
-										</Link>
-									</div>
-									<div className="hidden md:block">{index}</div>
-								</div>
-							))}
-							{block.tx.length > 15 && (
-								<div className="text-center text-sm text-muted-foreground p-4">And {block.tx.length - 15} more transactions...</div>
-							)}
-						</div>
-					</div>
-				</CardContent>
-			</Card>
+			<BlockTxList txids={block.tx} blockHeight={block.height} />
 		</div>
 	)
 }

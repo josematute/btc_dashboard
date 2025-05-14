@@ -8,7 +8,6 @@ import { notFound } from "next/navigation"
 import { Transaction, TransactionInput, TransactionOutput } from "@/lib/types"
 
 export default async function TransactionPage({ params }: { params: Promise<{ id: string }> }) {
-	// Fetch real transaction data
 	const txid = (await params).id
 	const tx = (await getTransaction(txid)) as Transaction
 
