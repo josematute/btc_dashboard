@@ -190,3 +190,11 @@ export interface ApiError {
   status?: number;
   errors?: Record<string, string[]>;
 }
+
+export interface SpecialBlock {
+  title: string
+  description: string
+  icon: string
+  gradient: string
+  textColor: string
+}

@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge"
 import { BlockTxList } from "./block-tx-list"
 import { CopyButton } from "@/components/copy-button"
 import { format } from "timeago.js"
+import { BlockSpecialInfo } from "@/components/block-special-info"
+import { SPECIAL_BLOCKS } from "@/lib/constants"
+import { cn } from "@/lib/utils"
 
 export default async function BlockPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params
@@ -19,8 +22,15 @@ export default async function BlockPage({ params }: { params: Promise<{ id: stri
 		notFound()
 	}
 
+	const isSpecialBlock = block.height in SPECIAL_BLOCKS
+
 	return (
-		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
+		<div
+			className={cn(
+				"space-y-6 max-w-6xl mx-auto py-6 px-4",
+				isSpecialBlock &&
+					"relative before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-r before:from-yellow-500/5 before:via-amber-500/5 before:to-yellow-500/5 before:animate-gradient-x before:rounded-3xl"
+			)}>
 			<div className="flex items-center gap-2">
 				<Link href="/" className="rounded-md border p-2 inline-flex items-center justify-center hover:bg-muted">
 					<ArrowLeft className="h-4 w-4" />
@@ -40,6 +50,8 @@ export default async function BlockPage({ params }: { params: Promise<{ id: stri
 					)}
 				</Badge>
 			</div>
+
+			<BlockSpecialInfo height={block.height} />
 
 			<Card>
 				<CardHeader>
