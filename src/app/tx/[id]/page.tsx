@@ -5,11 +5,14 @@ import { BitcoinValue } from "@/components/bitcoin-value"
 import { ArrowLeft, Hash, ArrowDownUp, ArrowRight, CreditCard } from "lucide-react"
 import { getTransaction } from "@/lib/transaction-actions"
 import { notFound } from "next/navigation"
-import { Transaction, TransactionInput, TransactionOutput } from "@/lib/types"
+import { Tx, TxInput, TxOutput } from "@/lib/types"
+import { CopyButton } from "@/components/copy-button"
 
 export default async function TransactionPage({ params }: { params: Promise<{ id: string }> }) {
 	const txid = (await params).id
-	const tx = (await getTransaction(txid)) as Transaction
+	const tx = (await getTransaction(txid)) as Tx
+
+	console.log("tx", tx)
 
 	// If transaction not found, show 404
 	if (!tx) {
@@ -17,7 +20,7 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 	}
 
 	// Calculate total input and output values
-	const totalOutput = tx.vout.reduce((sum: number, output: TransactionOutput) => sum + output.value, 0)
+	const totalOutput = tx.vout.reduce((sum: number, output: TxOutput) => sum + output.value, 0)
 
 	return (
 		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
@@ -40,17 +43,23 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 					<div className="grid gap-4">
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Transaction ID</p>
-							<p className="text-sm font-mono break-all">{tx.txid}</p>
+							<div className="flex items-center gap-2">
+								<p className="text-sm font-mono break-all">{tx.txid}</p>
+								<CopyButton text={tx.txid} title="Transaction ID copied" description="The transaction ID has been copied to your clipboard" />
+							</div>
 						</div>
 
 						{tx.blockhash && (
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Included in Block</p>
-								<p className="text-sm font-mono">
-									<Link href={`/block/${tx.status?.block_height || ""}`} className="hover:text-primary">
-										{shortenHash(tx.blockhash, 16)}
-									</Link>
-								</p>
+								<div className="flex items-center gap-2">
+									<p className="text-sm font-mono">
+										<Link href={`/block/${tx.blockhash}`} className="hover:text-primary">
+											{tx.blockhash}
+										</Link>
+									</p>
+									<CopyButton text={tx.blockhash} title="Block hash copied" description="The block hash has been copied to your clipboard" />
+								</div>
 							</div>
 						)}
 
@@ -58,7 +67,7 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Status</p>
 								<div className="flex items-center gap-2 mt-1">
-									{tx.status?.confirmed ? (
+									{tx.confirmations && tx.confirmations >= 6 ? (
 										<span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-green-500/10 text-green-500 border border-green-500/20">
 											Confirmed
 										</span>
@@ -138,7 +147,7 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 								<div className="font-medium text-sm hidden md:block">Sequence</div>
 							</div>
 							<div className="divide-y">
-								{tx.vin.map((input: TransactionInput, index: number) => (
+								{tx.vin.map((input: TxInput, index: number) => (
 									<div key={index} className="grid grid-cols-[2fr_1fr_2fr_1fr] p-3 items-center">
 										<div className="font-mono text-xs truncate">
 											{input.txid ? (
@@ -173,7 +182,7 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 								<div className="font-medium text-sm text-right">Value</div>
 							</div>
 							<div className="divide-y">
-								{tx.vout.map((output: TransactionOutput) => (
+								{tx.vout.map((output: TxOutput) => (
 									<div key={output.n} className="grid grid-cols-[1fr_2fr_1fr_1fr] p-3 items-center">
 										<div>{output.n}</div>
 										<div className="font-mono text-xs truncate">
@@ -218,7 +227,14 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 					</CardHeader>
 					<CardContent>
 						<div className="bg-muted p-4 rounded-md overflow-x-auto">
-							<pre className="text-xs font-mono whitespace-pre-wrap break-all">{tx.hex}</pre>
+							<div className="flex items-start gap-2">
+								<pre className="text-xs font-mono whitespace-pre-wrap break-all flex-1">{tx.hex}</pre>
+								<CopyButton
+									text={tx.hex}
+									title="Raw transaction copied"
+									description="The raw transaction data has been copied to your clipboard"
+								/>
+							</div>
 						</div>
 					</CardContent>
 				</Card>

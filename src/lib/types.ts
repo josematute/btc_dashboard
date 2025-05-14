@@ -121,8 +121,7 @@ export interface BlockStats {
   utxo_size_inc_actual: number
 }
 
-// Transaction
-export interface Transaction {
+export interface Tx {
   txid: string
   hash: string
   version: number
@@ -130,23 +129,17 @@ export interface Transaction {
   vsize: number
   weight: number
   locktime: number
-  vin: TransactionInput[]
-  vout: TransactionOutput[]
+  vin: TxInput[]
+  vout: TxOutput[]
   hex?: string
   blockhash?: string
   confirmations?: number
   time?: number
   blocktime?: number
-  status?: {
-    confirmed: boolean
-    block_height?: number
-    block_hash?: string
-    block_time?: number
-  }
   fee?: number
 }
 
-export interface TransactionInput {
+export interface TxInput {
   txid?: string
   vout: number
   scriptSig?: {
@@ -155,11 +148,11 @@ export interface TransactionInput {
   }
   sequence: number
   witness?: string[]
-  prevout?: TransactionOutput
+  prevout?: TxOutput
   coinbase?: string
 }
 
-export interface TransactionOutput {
+export interface TxOutput {
   value: number
   n: number
   scriptPubKey: {
@@ -171,7 +164,6 @@ export interface TransactionOutput {
   }
 }
 
-// Address (basic)
 export interface Address {
   address: string
   balance: number
@@ -196,4 +188,3 @@ export interface ApiError {
   status?: number;
   errors?: Record<string, string[]>;
 }
-

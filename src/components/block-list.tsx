@@ -1,11 +1,11 @@
-import { shortenHash, formatDate, copyToClipboard } from "@/lib/utils"
+import { shortenHash, formatDate } from "@/lib/utils"
 import { Block } from "@/lib/types"
-import { Copy, Info } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Info } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Link from "next/link"
 import { format } from "timeago.js"
+import { CopyButton } from "@/components/copy-button"
 
 interface BlockListProps {
 	blocks: Block[]
@@ -49,20 +49,7 @@ export function BlockList({ blocks }: BlockListProps) {
 								<span className="text-sm text-blue-600 dark:text-blue-400 font-mono truncate">
 									{hashLength ? shortenHash(block.hash, hashLength) : block.hash}
 								</span>
-								<Button
-									variant="ghost"
-									size="icon"
-									className="h-6 w-6 shrink-0"
-									onClick={(e) => {
-										e.preventDefault()
-										copyToClipboard(block.hash, {
-											title: "Block hash copied",
-											description: "The full block hash has been copied to your clipboard"
-										})
-									}}>
-									<Copy className="h-3.5 w-3.5" />
-									<span className="sr-only">Copy block hash</span>
-								</Button>
+								<CopyButton text={block.hash} title="Block hash copied" description="The full block hash has been copied to your clipboard" />
 							</div>
 						</div>
 						<div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 text-xs text-muted-foreground">

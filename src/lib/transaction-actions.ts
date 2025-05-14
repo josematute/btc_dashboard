@@ -1,9 +1,9 @@
 "use server"
 
 import { cookies } from "next/headers"
-import { Transaction } from "./types"
+import { Tx } from "./types"
 
-export async function getTransaction(txid: string): Promise<Transaction | null> {
+export async function getTransaction(txid: string): Promise<Tx | null> {
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get("accessToken")?.value
