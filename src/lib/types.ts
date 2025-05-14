@@ -197,4 +197,5 @@ export interface SpecialBlock {
   icon: string
   gradient: string
   textColor: string
+  hash: string
 }

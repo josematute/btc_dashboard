@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { SPECIAL_BLOCKS } from "@/lib/constants"
-import { Bitcoin, Pizza, Sparkles, Zap, Lock } from "lucide-react"
+import { Bitcoin, Pizza, Sparkles, Zap, Lock, Settings } from "lucide-react"
 
 interface BlockSpecialInfoProps {
 	height: number
@@ -11,7 +11,8 @@ const iconMap = {
 	Pizza,
 	Sparkles,
 	Zap,
-	Lock
+	Lock,
+	Settings
 }
 
 export function BlockSpecialInfo({ height }: BlockSpecialInfoProps) {

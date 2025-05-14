@@ -9,6 +9,7 @@ import { LatestBlocksSection } from "@/components/latest-blocks-section"
 import { getLatestBlocks } from "@/lib/block-actions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { BitcoinValue } from "@/components/bitcoin-value"
+import { BitcoinBlockMuseum } from "@/components/bitcoin-block-museum"
 
 async function getBitcoinInfo() {
 	const cookieStore = await cookies()
@@ -179,6 +180,9 @@ async function DashboardContent() {
 					</CardContent>
 				</Card>
 			</div>
+
+			{/* Bitcoin Block Museum */}
+			<BitcoinBlockMuseum />
 		</div>
 	)
 }
