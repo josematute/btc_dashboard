@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle } from "lucide-react"
+import { EMAIL } from "@/lib/constants"
 
 export default function NotFound() {
 	return (
@@ -30,7 +31,11 @@ export default function NotFound() {
 			</div>
 
 			<div className="text-sm text-muted-foreground mt-8 border-t pt-6 max-w-md">
-				If you believe this is an error, please contact support or check your node connection.
+				If you believe this is an error, please{" "}
+				<a href={`mailto:${EMAIL}`} className="underline hover:text-foreground">
+					contact me
+				</a>{" "}
+				or check the node connection.
 			</div>
 		</div>
 	)
