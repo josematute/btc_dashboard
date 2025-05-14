@@ -1,29 +1,30 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { BackButton } from "@/components/back-button"
 
 export default async function AddressPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
 			<div className="flex items-center gap-2">
-				<Button variant="outline" size="icon" asChild>
-					<Link href="/">
-						<ArrowLeft className="h-4 w-4" />
-					</Link>
-				</Button>
-				<h1 className="text-3xl font-bold tracking-tight">Address</h1>
+				<BackButton />
+				<h1 className="text-3xl font-bold tracking-tight">Address Details</h1>
 			</div>
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Address Details</CardTitle>
-					<CardDescription>Address: {id}</CardDescription>
+					<CardTitle>Address Information (more info coming soon)</CardTitle>
+					<CardDescription>Detailed information about address {id}</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<p className="text-muted-foreground">This page will display address details in the future.</p>
+					<div className="grid gap-4">
+						<div>
+							<p className="text-sm font-medium text-muted-foreground">Address</p>
+							<div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+								<p className="text-sm font-mono break-all min-w-0">{id}</p>
+							</div>
+						</div>
+					</div>
 				</CardContent>
 			</Card>
 		</div>

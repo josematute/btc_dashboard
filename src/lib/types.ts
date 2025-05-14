@@ -150,6 +150,7 @@ export interface TxInput {
   witness?: string[]
   prevout?: TxOutput
   coinbase?: string
+  txinwitness?: string[]
 }
 
 export interface TxOutput {
