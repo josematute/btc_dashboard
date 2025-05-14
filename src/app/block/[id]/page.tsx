@@ -1,29 +1,40 @@
-// This is now a Server Component
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatBytes, formatNumber, formatDate, shortenHash } from "@/lib/utils"
+import { formatBytes, formatNumber, formatDate, shortenHash, copyToClipboard } from "@/lib/utils"
 import Link from "next/link"
-import { ArrowLeft, Hash, Database } from "lucide-react"
+import { ArrowLeft, Hash, Database, Copy, CheckCircle2, AlertCircle } from "lucide-react"
 import { getBlock } from "@/lib/block-actions"
 import { notFound } from "next/navigation"
 import { Block } from "@/lib/types"
+import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
+import { use } from "react"
+import { Badge } from "@/components/ui/badge"
 
 // Add nextblockhash to the Block type
 type BlockWithNextBlock = Block & {
 	nextblockhash?: string
 }
 
-export default async function BlockPage({ params }: { params: Promise<{ id: string }> }) {
-	// Fetch the real block data using the ID from params
-	const blockId = (await params).id
-	const block = await getBlock(blockId)
+export default function BlockPage({ params }: { params: Promise<{ id: string }> }) {
+	const { id } = use(params)
+	const [block, setBlock] = useState<BlockWithNextBlock | null>(null)
 
-	// If no block was found, show the 404 page
+	useEffect(() => {
+		const fetchBlock = async () => {
+			const data = await getBlock(id)
+			if (!data) {
+				notFound()
+			}
+			setBlock(data as BlockWithNextBlock)
+		}
+		fetchBlock()
+	}, [id])
+
 	if (!block) {
-		notFound()
+		return null // or a loading state
 	}
-
-	// Cast the block to include the optional nextblockhash field
-	const blockWithNext = block as BlockWithNextBlock
 
 	return (
 		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
@@ -32,6 +43,19 @@ export default async function BlockPage({ params }: { params: Promise<{ id: stri
 					<ArrowLeft className="h-4 w-4" />
 				</Link>
 				<h1 className="text-3xl font-bold tracking-tight">Block #{block.height}</h1>
+				<Badge variant={block.confirmations >= 6 ? "default" : "secondary"} className="gap-1">
+					{block.confirmations >= 6 ? (
+						<>
+							<CheckCircle2 className="h-3.5 w-3.5" />
+							Confirmed
+						</>
+					) : (
+						<>
+							<AlertCircle className="h-3.5 w-3.5" />
+							Unconfirmed ({block.confirmations} confirmations)
+						</>
+					)}
+				</Badge>
 			</div>
 
 			<Card>
@@ -46,15 +70,43 @@ export default async function BlockPage({ params }: { params: Promise<{ id: stri
 					<div className="grid gap-4 md:grid-cols-2">
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Hash</p>
-							<p className="text-sm font-mono break-all">{block.hash}</p>
+							<div className="flex items-center gap-2">
+								<p className="text-sm font-mono break-all">{block.hash}</p>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-6 w-6"
+									onClick={() => {
+										copyToClipboard(block.hash, {
+											title: "Block hash copied",
+											description: "The full block hash has been copied to your clipboard"
+										})
+									}}>
+									<Copy className="h-3 w-3" />
+								</Button>
+							</div>
 						</div>
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Previous Block</p>
-							<p className="text-sm font-mono truncate">
-								<Link href={`/block/${block.previousblockhash}`} className="hover:text-primary">
+							<div className="flex items-center gap-2">
+								<Link
+									href={`/block/${block.previousblockhash}`}
+									className="text-sm font-mono truncate hover:text-primary transition-colors inline-flex items-center">
 									{shortenHash(block.previousblockhash, 12)}
 								</Link>
-							</p>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-6 w-6"
+									onClick={() => {
+										copyToClipboard(block.previousblockhash, {
+											title: "Previous block hash copied",
+											description: "The previous block hash has been copied to your clipboard"
+										})
+									}}>
+									<Copy className="h-3 w-3" />
+								</Button>
+							</div>
 						</div>
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Timestamp</p>
@@ -78,16 +130,46 @@ export default async function BlockPage({ params }: { params: Promise<{ id: stri
 						</div>
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Merkle Root</p>
-							<p className="text-sm font-mono truncate">{shortenHash(block.merkleroot, 12)}</p>
+							<div className="flex items-center gap-2">
+								<p className="text-sm font-mono truncate">{shortenHash(block.merkleroot, 12)}</p>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-6 w-6"
+									onClick={() => {
+										copyToClipboard(block.merkleroot, {
+											title: "Merkle root copied",
+											description: "The merkle root has been copied to your clipboard"
+										})
+									}}>
+									<Copy className="h-3 w-3" />
+								</Button>
+							</div>
 						</div>
-						{blockWithNext.nextblockhash && (
+						{block.nextblockhash && (
 							<div>
 								<p className="text-sm font-medium text-muted-foreground">Next Block</p>
-								<p className="text-sm font-mono truncate">
-									<Link href={`/block/${blockWithNext.nextblockhash}`} className="hover:text-primary">
-										{shortenHash(blockWithNext.nextblockhash, 12)}
+								<div className="flex items-center gap-2">
+									<Link
+										href={`/block/${block.nextblockhash}`}
+										className="text-sm font-mono truncate hover:text-primary transition-colors inline-flex items-center">
+										{shortenHash(block.nextblockhash, 12)}
 									</Link>
-								</p>
+									<Button
+										variant="ghost"
+										size="icon"
+										className="h-6 w-6"
+										onClick={() => {
+											if (block.nextblockhash) {
+												copyToClipboard(block.nextblockhash, {
+													title: "Next block hash copied",
+													description: "The next block hash has been copied to your clipboard"
+												})
+											}
+										}}>
+										<Copy className="h-3 w-3" />
+									</Button>
+								</div>
 							</div>
 						)}
 						<div>
