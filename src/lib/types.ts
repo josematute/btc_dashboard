@@ -84,6 +84,7 @@ export interface Block {
   size: number
   weight: number
   tx: string[]
+  nextblockhash?: string
 }
 
 // Block Stats

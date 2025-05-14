@@ -1,40 +1,21 @@
-"use client"
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatBytes, formatNumber, formatDate, shortenHash } from "@/lib/utils"
 import Link from "next/link"
 import { ArrowLeft, Hash, CheckCircle2, AlertCircle } from "lucide-react"
 import { getBlock } from "@/lib/block-actions"
 import { notFound } from "next/navigation"
-import { Block } from "@/lib/types"
-import { useEffect, useState } from "react"
-import { use } from "react"
 import { Badge } from "@/components/ui/badge"
 import { BlockTxList } from "./block-tx-list"
 import { CopyButton } from "@/components/copy-button"
 
-// Add nextblockhash to the Block type
-type BlockWithNextBlock = Block & {
-	nextblockhash?: string
-}
+export default async function BlockPage({ params }: { params: Promise<{ id: string }> }) {
+	const { id } = await params
+	const block = await getBlock(id)
 
-export default function BlockPage({ params }: { params: Promise<{ id: string }> }) {
-	const { id } = use(params)
-	const [block, setBlock] = useState<BlockWithNextBlock | null>(null)
-
-	useEffect(() => {
-		const fetchBlock = async () => {
-			const data = await getBlock(id)
-			if (!data) {
-				notFound()
-			}
-			setBlock(data as BlockWithNextBlock)
-		}
-		fetchBlock()
-	}, [id])
+	console.log("block", block)
 
 	if (!block) {
-		return null // or a loading state
+		notFound()
 	}
 
 	return (
