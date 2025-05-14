@@ -2,7 +2,7 @@ import { getLatestBlocks } from "@/lib/block-actions"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
 
 export default async function BlocksPage() {
-	// Fetch the latest blocks (20 instead of default 10)
+	// Fetch the latest blocks (190 instead of default 10)
 	const { blocks } = await getLatestBlocks(19)
 
 	return (

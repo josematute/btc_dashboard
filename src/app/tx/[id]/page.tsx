@@ -3,7 +3,7 @@ import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
 import Link from "next/link"
 import { BitcoinValue } from "@/components/bitcoin-value"
 import { ArrowLeft, Hash, ArrowDownUp, ArrowRight, CreditCard } from "lucide-react"
-import { getTransaction } from "@/lib/transaction-actions"
+import { getTransaction } from "@/lib/tx-actions"
 import { notFound } from "next/navigation"
 import { Tx, TxInput, TxOutput } from "@/lib/types"
 import { CopyButton } from "@/components/copy-button"
@@ -12,9 +12,6 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 	const txid = (await params).id
 	const tx = (await getTransaction(txid)) as Tx
 
-	console.log("tx", tx)
-
-	// If transaction not found, show 404
 	if (!tx) {
 		notFound()
 	}

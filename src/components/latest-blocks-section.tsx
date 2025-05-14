@@ -25,7 +25,6 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 		setIsLoading(true)
 		try {
 			const nextPage = page + 1
-			// Call our server action which includes proper authorization headers
 			const newBlocks = await getMoreBlocks(nextPage, pageSize)
 
 			if (newBlocks.length > 0) {
