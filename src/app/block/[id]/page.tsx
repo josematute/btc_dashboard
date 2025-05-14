@@ -7,6 +7,7 @@ import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { BlockTxList } from "./block-tx-list"
 import { CopyButton } from "@/components/copy-button"
+import { format } from "timeago.js"
 
 export default async function BlockPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params
@@ -74,7 +75,10 @@ export default async function BlockPage({ params }: { params: Promise<{ id: stri
 						</div>
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Timestamp</p>
-							<p className="text-sm">{formatDate(block.time)}</p>
+							<p className="text-sm">
+								{formatDate(block.time)}
+								<span className="ml-1 text-muted-foreground">({format(block.time * 1000)})</span>
+							</p>
 						</div>
 						<div>
 							<p className="text-sm font-medium text-muted-foreground">Transactions</p>

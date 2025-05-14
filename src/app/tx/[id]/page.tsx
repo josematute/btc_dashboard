@@ -7,6 +7,7 @@ import { getTransaction } from "@/lib/tx-actions"
 import { notFound } from "next/navigation"
 import { Tx, TxInput, TxOutput } from "@/lib/types"
 import { CopyButton } from "@/components/copy-button"
+import { format } from "timeago.js"
 
 export default async function TransactionPage({ params }: { params: Promise<{ id: string }> }) {
 	const txid = (await params).id
@@ -84,7 +85,10 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 							{tx.time && (
 								<div>
 									<p className="text-sm font-medium text-muted-foreground">Timestamp</p>
-									<p className="text-sm">{formatDate(tx.time)}</p>
+									<p className="text-sm">
+										{formatDate(tx.time)}
+										<span className="ml-1 text-muted-foreground">({format(tx.time * 1000)})</span>
+									</p>
 								</div>
 							)}
 
