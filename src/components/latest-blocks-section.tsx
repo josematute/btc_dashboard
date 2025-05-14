@@ -59,7 +59,7 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 
 				{isLoading ? (
 					<div className="mt-4">
-						<LoadingSpinner size="sm" message="Mining additional blocks..." />
+						<LoadingSpinner size="sm" message="Retrieving additional blocks..." />
 					</div>
 				) : (
 					<div className="mt-4 text-center">

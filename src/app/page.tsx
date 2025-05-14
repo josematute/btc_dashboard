@@ -67,7 +67,7 @@ async function DashboardContent() {
 			</div>
 
 			{/* Latest Blocks Section */}
-			<LatestBlocksSection initialBlocks={blocks} initialPageSize={10} />
+			<LatestBlocksSection initialBlocks={blocks} initialPageSize={15} />
 
 			{/* Summary Stats */}
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
