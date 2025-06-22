@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Link from "next/link"
 import Image from "next/image"
 import { Blocks, Network, Database, Clock, Info } from "lucide-react"
-import { cookies } from "next/headers"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
 import { getLatestBlocks } from "@/lib/block-actions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -12,18 +11,9 @@ import { BitcoinValue } from "@/components/bitcoin-value"
 import { BitcoinBlockMuseum } from "@/components/bitcoin-block-museum"
 
 async function getBitcoinInfo() {
-	const cookieStore = await cookies()
-	const token = cookieStore.get("accessToken")?.value
-	if (!token) {
-		return { blockchain: null, network: null, mempool: null }
-	}
-
 	try {
 		const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/info`, {
-			cache: "no-store",
-			headers: {
-				Authorization: `Bearer ${token}`
-			}
+			cache: "no-store"
 		})
 
 		if (!res.ok) {

@@ -15,10 +15,10 @@ export default function NotFound() {
 				</div>
 			</div>
 
-			<h1 className="text-5xl font-bold tracking-tight mb-2 md:text-6xl">Block Not Found</h1>
+			<h1 className="text-5xl font-bold tracking-tight mb-2 md:text-6xl">Page Not Found</h1>
 
 			<p className="text-xl text-muted-foreground max-w-lg mb-6">
-				We couldn&apos;t find the resource you were looking for. Perhaps it was orphaned or never mined.
+				We couldn&apos;t find the page you were looking for. It may have been moved or doesn&apos;t exist.
 			</p>
 
 			<div className="flex flex-col sm:flex-row gap-4">
