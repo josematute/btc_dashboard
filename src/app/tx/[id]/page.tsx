@@ -200,9 +200,7 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 										<div>{output.n}</div>
 										<div className="font-mono text-xs break-all">
 											{output.scriptPubKey.address ? (
-												<Link href={`/address/${output.scriptPubKey.address}`} className="hover:text-primary">
-													{output.scriptPubKey.address}
-												</Link>
+												<p>{output.scriptPubKey.address}</p>
 											) : (
 												<span className="text-muted-foreground">Non-standard</span>
 											)}
