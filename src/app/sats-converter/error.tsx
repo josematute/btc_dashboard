@@ -6,9 +6,12 @@ import { AlertOctagon } from "lucide-react"
 import Link from "next/link"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 
-export default function BlockError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-	console.error("Block error occurred:", error)
+interface SatsConverterErrorProps {
+	error: Error & { digest?: string }
+	reset: () => void
+}
 
+export default function SatsConverterError({ error, reset }: SatsConverterErrorProps) {
 	return (
 		<div className="flex flex-col items-center justify-center min-h-[80vh] p-4 text-center">
 			<div className="flex items-center justify-center mb-4">
@@ -19,10 +22,10 @@ export default function BlockError({ error, reset }: { error: Error & { digest?:
 				</div>
 			</div>
 
-			<h1 className="text-5xl font-bold tracking-tight mb-2 md:text-6xl">Block Not Found</h1>
+			<h1 className="text-5xl font-bold tracking-tight mb-2 md:text-6xl">Converter Error</h1>
 
 			<p className="text-xl text-muted-foreground max-w-lg mb-6">
-				We couldn&apos;t find the block you were looking for. Perhaps it was orphaned or never mined.
+				We couldn&apos;t load the sats converter. This might be due to a network issue or API failure.
 				{error.digest && <span className="block mt-2 text-sm font-mono">Error ID: {error.digest}</span>}
 			</p>
 
@@ -31,11 +34,13 @@ export default function BlockError({ error, reset }: { error: Error & { digest?:
 					Try Again
 				</Button>
 				<Button variant="outline" size="lg" asChild className="cursor-pointer">
-					<Link href="/blocks">View Latest Blocks</Link>
+					<Link href="/">Go to Dashboard</Link>
 				</Button>
 			</div>
 
-			<div className="text-sm text-muted-foreground mt-8 border-t pt-6 max-w-md">If you believe this is an error, please check the node connection.</div>
+			<div className="text-sm text-muted-foreground mt-8 border-t pt-6 max-w-md">
+				If the problem persists, the Bitcoin price API might be temporarily unavailable.
+			</div>
 		</div>
 	)
 }

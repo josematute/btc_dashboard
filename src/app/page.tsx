@@ -9,6 +9,7 @@ import { getLatestBlocks } from "@/lib/block-actions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { BitcoinValue } from "@/components/bitcoin-value"
 import { BitcoinBlockMuseum } from "@/components/bitcoin-block-museum"
+import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 
 async function getBitcoinInfo() {
 	try {
@@ -68,7 +69,7 @@ async function DashboardContent() {
 					title="Chain"
 					value={blockchain.chain.toUpperCase()}
 					description="Current blockchain"
-					icon={<Image src="/Bitcoin.svg.png" alt="Bitcoin" width={16} height={16} />}
+					icon={<Image src={BITCOIN_IMAGE_PATH} alt="Bitcoin" width={16} height={16} />}
 				/>
 				<StatCard
 					title="Block Height"

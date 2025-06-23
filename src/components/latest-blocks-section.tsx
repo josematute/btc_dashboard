@@ -62,7 +62,7 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 					</div>
 				) : (
 					<div className="mt-4 text-center">
-						<Button variant="outline" onClick={loadMoreBlocks} disabled={isLoading} className="w-full">
+						<Button variant="outline" onClick={loadMoreBlocks} disabled={isLoading} className="w-full cursor-pointer">
 							Load More Blocks
 						</Button>
 					</div>

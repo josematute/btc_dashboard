@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 
 interface LoadingSpinnerProps {
 	size?: "sm" | "md" | "lg"
@@ -16,7 +17,7 @@ export function LoadingSpinner({ size = "md", message = "Loading...", fullHeight
 	return (
 		<div className={`flex flex-col items-center justify-center text-center ${fullHeight ? "min-h-[80vh]" : "py-8"}`}>
 			<div className={`relative ${sizeClasses[size]} mb-4 animate-spin`}>
-				<Image src="/Bitcoin.svg.png" alt="Bitcoin Logo" fill className="object-contain" priority />
+				<Image src={BITCOIN_IMAGE_PATH} alt="Bitcoin Logo" fill className="object-contain" priority />
 			</div>
 			{message && <p className="text-muted-foreground font-medium">{message}</p>}
 		</div>

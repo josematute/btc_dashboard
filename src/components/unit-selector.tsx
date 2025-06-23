@@ -13,7 +13,7 @@ export function UnitSelector() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="sm" className="h-8 gap-1 px-2 w-[80px]">
+				<Button variant="outline" size="sm" className="h-8 gap-1 px-2 w-[80px] cursor-pointer">
 					{unit.toUpperCase()}
 					<ChevronsUpDown className="h-3.5 w-3.5 opacity-50" />
 				</Button>

@@ -49,7 +49,7 @@ export function BlockTxList({ txids, blockHeight }: BlockTxListProps) {
 									<Button
 										variant="ghost"
 										size="icon"
-										className="h-6 w-6 shrink-0"
+										className="h-6 w-6 shrink-0 cursor-pointer"
 										onClick={() => {
 											copyToClipboard(txid, {
 												title: "Transaction ID copied",
@@ -76,7 +76,7 @@ export function BlockTxList({ txids, blockHeight }: BlockTxListProps) {
 							<Button
 								variant="outline"
 								size="icon"
-								className="h-8 w-8"
+								className="h-8 w-8 cursor-pointer"
 								onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
 								disabled={currentPage === 1}>
 								<ChevronLeft className="h-4 w-4" />
@@ -90,7 +90,7 @@ export function BlockTxList({ txids, blockHeight }: BlockTxListProps) {
 							<Button
 								variant="outline"
 								size="icon"
-								className="h-8 w-8"
+								className="h-8 w-8 cursor-pointer"
 								onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
 								disabled={currentPage === totalPages}>
 								<ChevronRight className="h-4 w-4" />

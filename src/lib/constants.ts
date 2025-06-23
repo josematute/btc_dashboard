@@ -75,4 +75,7 @@ export const SPECIAL_BLOCKS: Record<number, SpecialBlock> = {
     textColor: "text-indigo-500",
     hash: "0000000000000000000320283a032748cef8227873ff4872689bf23f1cda83a5"
   }
-} 
+}
+
+export const SATS_PER_BTC = 100000000
+export const BITCOIN_IMAGE_PATH = "/bitcoin-logo.png"
