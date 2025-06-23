@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { UnitProvider } from "@/lib/use-unit"
-import { NavbarContainer } from "@/components/navbar-container"
 import { Toaster } from "sonner"
+import { Navbar } from "@/components/navbar"
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -30,7 +30,7 @@ export default function RootLayout({
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
 				<UnitProvider>
 					<div className="relative flex min-h-screen flex-col">
-						<NavbarContainer />
+						<Navbar />
 						<main className="flex-1">{children}</main>
 						<Toaster />
 					</div>
