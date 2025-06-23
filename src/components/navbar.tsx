@@ -62,8 +62,17 @@ export function Navbar() {
 										{!isSatsConverterPage && (
 											<div className="px-2">
 												<Link href="/sats-converter" className="block" onClick={() => setIsOpen(false)}>
-													<Button variant="outline" className="w-full cursor-pointer">
+													<Button variant="outline" className="w-full cursor-pointer max-w-[150px]">
 														Sats Converter
+													</Button>
+												</Link>
+											</div>
+										)}
+										{!isFCFCalculatorPage && (
+											<div className="px-2">
+												<Link href="/fcf-calculator" className="block" onClick={() => setIsOpen(false)}>
+													<Button variant="outline" className="w-full cursor-pointer max-w-[150px]">
+														FCF Calculator
 													</Button>
 												</Link>
 											</div>

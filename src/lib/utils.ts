@@ -22,6 +22,7 @@ export function formatNumber(num: number) {
   return new Intl.NumberFormat().format(num)
 }
 
+// Format blocks' timestamp to a readable date
 export function formatDate(timestamp: number) {
   // Bitcoin timestamps are in seconds since UNIX epoch
   const date = new Date(timestamp * 1000)

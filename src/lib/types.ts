@@ -1,4 +1,3 @@
-// Blockchain Info
 export interface BlockchainInfo {
   chain: string
   blocks: number
@@ -15,7 +14,6 @@ export interface BlockchainInfo {
   warnings: string
 }
 
-// Network Info
 export interface NetworkInfo {
   version: number
   subversion: string
@@ -49,7 +47,6 @@ export interface LocalAddress {
   score: number
 }
 
-// Mempool Info
 export interface MempoolInfo {
   loaded: boolean
   size: number
@@ -64,7 +61,6 @@ export interface MempoolInfo {
   fullrbf: boolean
 }
 
-// Block
 export interface Block {
   hash: string
   confirmations: number
@@ -87,7 +83,6 @@ export interface Block {
   nextblockhash?: string
 }
 
-// Block Stats
 export interface BlockStats {
   avgfee: number
   avgfeerate: number
@@ -166,31 +161,6 @@ export interface TxOutput {
   }
 }
 
-export interface Address {
-  address: string
-  balance: number
-  txCount: number
-}
-
-export interface User {
-  id: string;
-  name: string;
-  username: string;
-  email: string;
-}
-
-export interface UserAndCredentials {
-  user: User;
-  token: string;
-  refresh: string;
-}
-
-export interface ApiError {
-  message: string;
-  status?: number;
-  errors?: Record<string, string[]>;
-}
-
 export interface SpecialBlock {
   title: string
   description: string
@@ -198,4 +168,18 @@ export interface SpecialBlock {
   gradient: string
   textColor: string
   hash: string
+}
+
+// Types for FCF Calculator, each year of the loan
+export interface YearData {
+  year: number
+  age: number
+  value: number
+  agr: number
+  gain: number
+  ltv: number
+  debt: number
+  interest: number
+  fcf: number
+  ppBtc: number
 }
