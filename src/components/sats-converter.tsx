@@ -39,7 +39,6 @@ const parseFormattedNumber = (value: string): number => {
 export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 	const [usd, setUsd] = useState("100")
 	const [sats, setSats] = useState("10,000,000")
-	const [btc, setBtc] = useState("0.001")
 	const [btcDisplay, setBtcDisplay] = useState("0.001") // Raw display value for BTC input
 	const [useCustomPrice, setUseCustomPrice] = useState(false)
 	const [customPrice, setCustomPrice] = useState(formatWithCommas(btcPrice))
@@ -55,7 +54,6 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 		const satsValue = btcValue * SATS_PER_BTC
 
 		const btcResult = btcValue.toFixed(8)
-		setBtc(btcResult)
 		setBtcDisplay(formatBitcoin(btcResult))
 		setSats(formatWithCommas(Math.round(satsValue)))
 	}
@@ -68,7 +66,6 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 		const usdValue = btcValue * effectivePrice
 
 		const btcResult = btcValue.toFixed(8)
-		setBtc(btcResult)
 		setBtcDisplay(formatBitcoin(btcResult))
 		setUsd(usdValue.toFixed(2))
 	}
@@ -76,7 +73,6 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 	const handleBtcChange = (value: string) => {
 		const cleanValue = value.replace(/,/g, "")
 		setBtcDisplay(value) // Store the raw input for display
-		setBtc(cleanValue) // Store the clean value for calculations
 		const btcValue = parseFloat(cleanValue) || 0
 		const usdValue = btcValue * effectivePrice
 		const satsValue = btcValue * SATS_PER_BTC
@@ -95,7 +91,6 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 			const satsValue = btcValue * SATS_PER_BTC
 
 			const btcResult = btcValue.toFixed(8)
-			setBtc(btcResult)
 			setBtcDisplay(formatBitcoin(btcResult))
 			setSats(formatWithCommas(Math.round(satsValue)))
 		} else if (!checked) {
@@ -105,7 +100,6 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 			const satsValue = btcValue * SATS_PER_BTC
 
 			const btcResult = btcValue.toFixed(8)
-			setBtc(btcResult)
 			setBtcDisplay(formatBitcoin(btcResult))
 			setSats(formatWithCommas(Math.round(satsValue)))
 		}
@@ -122,7 +116,6 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 			const satsValue = btcValue * SATS_PER_BTC
 
 			const btcResult = btcValue.toFixed(8)
-			setBtc(btcResult)
 			setBtcDisplay(formatBitcoin(btcResult))
 			setSats(formatWithCommas(Math.round(satsValue)))
 		}

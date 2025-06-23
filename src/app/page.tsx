@@ -1,7 +1,6 @@
 import { StatCard } from "@/components/stat-card"
 import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
 import Image from "next/image"
 import { Blocks, Network, Database, Clock, Info } from "lucide-react"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
@@ -13,6 +12,7 @@ import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 
 async function getBitcoinInfo() {
 	try {
+		// await new Promise((resolve) => setTimeout(resolve, 100000))
 		const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/info`, {
 			cache: "no-store"
 		})
@@ -34,24 +34,6 @@ async function getBitcoinInfo() {
 async function DashboardContent() {
 	const { blockchain, network, mempool } = await getBitcoinInfo()
 	const { blocks } = await getLatestBlocks(10)
-
-	// If no data, show login prompt
-	if (!blockchain || !network || !mempool) {
-		return (
-			<div className="flex flex-col items-center justify-center min-h-[60vh]">
-				<h2 className="text-2xl font-bold mb-4">Authentication Required</h2>
-				<p className="text-muted-foreground mb-6">Please log in to view Bitcoin blockchain data.</p>
-				<div className="flex gap-4">
-					<Link href="/login" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md">
-						Login
-					</Link>
-					<Link href="/signup" className="bg-secondary text-secondary-foreground px-4 py-2 rounded-md">
-						Sign Up
-					</Link>
-				</div>
-			</div>
-		)
-	}
 
 	return (
 		<div className="space-y-6">

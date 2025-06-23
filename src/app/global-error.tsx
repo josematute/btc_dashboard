@@ -1,14 +1,15 @@
-"use client" // Error boundaries must be Client Components
+"use client"
 
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { AlertOctagon } from "lucide-react"
 import Link from "next/link"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
+import { usePathname } from "next/navigation"
 
-export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-	// Log the error to console (helpful for debugging)
-	console.error("Global error occurred:", error)
+export default function GlobalError() {
+	const pathname = usePathname()
+	const isHome = pathname === "/"
 
 	return (
 		<html lang="en">
@@ -21,20 +22,26 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 					</div>
 				</div>
 
-				<h1 className="text-4xl font-bold tracking-tight mb-2 md:text-5xl">Blockchain Reorg Detected</h1>
+				<h1 className="text-4xl font-bold tracking-tight mb-2 md:text-5xl">There was an error</h1>
 
 				<p className="text-xl text-muted-foreground max-w-lg mb-6">
-					Something went wrong! Looks like we hit an Ethereum-style outage.
-					{error.digest && <span className="block mt-2 text-sm font-mono">Error ID: {error.digest}</span>}
+					Something went wrong! Looks like we hit an Ethereum-style outage. Probably my bitcoin node is down :S
 				</p>
 
 				<div className="flex flex-col sm:flex-row gap-4">
-					<Button size="lg" onClick={() => reset()} className="bg-orange-500 hover:bg-orange-600 cursor-pointer">
-						Mine New Block
+					<Button
+						size="lg"
+						onClick={() => {
+							window.location.reload()
+						}}
+						className="bg-orange-500 hover:bg-orange-600 cursor-pointer">
+						Refresh
 					</Button>
-					<Button variant="outline" size="lg" asChild className="cursor-pointer">
-						<Link href="/">Return to Genesis</Link>
-					</Button>
+					{!isHome && (
+						<Button variant="outline" size="lg" asChild className="cursor-pointer">
+							<Link href="/">Return to Home</Link>
+						</Button>
+					)}
 				</div>
 
 				<div className="text-sm text-muted-foreground mt-8 border-t pt-6 max-w-md">
