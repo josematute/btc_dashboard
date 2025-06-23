@@ -10,6 +10,9 @@ import { BitcoinValue } from "@/components/bitcoin-value"
 import { BitcoinBlockMuseum } from "@/components/bitcoin-block-museum"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 
+// Force dynamic rendering since we need to fetch live data
+export const dynamic = "force-dynamic"
+
 export default async function Home() {
 	const { blockchain, network, mempool } = await getBitcoinInfo()
 	const { blocks } = await getLatestBlocks(10)
