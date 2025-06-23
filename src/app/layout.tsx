@@ -29,9 +29,9 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
 				<UnitProvider>
-					<div className="relative flex min-h-screen flex-col">
+					<div className="flex flex-col min-h-screen ">
 						<Navbar />
-						<main className="flex-1">{children}</main>
+						<main className="flex-grow w-full flex flex-col">{children}</main>
 						<Toaster />
 					</div>
 				</UnitProvider>

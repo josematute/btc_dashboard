@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Bitcoin } from "lucide-react"
-
-const SATS_PER_BTC = 100000000
+import { SATS_PER_BTC, BITCOIN_IMAGE_PATH, SATS_IMAGE_PATH, USD_IMAGE_PATH } from "@/lib/constants"
+import Image from "next/image"
 
 interface SatsConverterProps {
 	btcPrice: number
@@ -48,23 +48,24 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 	}
 
 	return (
-		<div className="min-h-screen p-4 flex items-center justify-center">
+		<div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4 py-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
-						<Bitcoin className="h-6 w-6 text-orange-500" />
-						<CardTitle className="text-2xl font-bold">Sats Converter</CardTitle>
+						<Bitcoin className="h-7 w-7 text-orange-500" />
+						<CardTitle className="text-3xl font-bold">Sats Converter</CardTitle>
 					</div>
-					<CardDescription className="text-base">
+					<CardDescription className="text-lg">
 						Simple satoshi to USD converter. Convert between Bitcoin, satoshis, and US dollars instantly.
 					</CardDescription>
-					<div className="text-sm text-muted-foreground mt-2">
+					<div className="text-base text-muted-foreground mt-2">
 						Bitcoin Price: <span className="font-semibold text-orange-600">${btcPrice.toLocaleString()}</span>
 					</div>
 				</CardHeader>
 				<CardContent className="space-y-6">
 					<div className="space-y-2">
-						<Label htmlFor="usd" className="text-sm font-medium">
+						<Label htmlFor="usd" className="text-base font-medium flex items-center gap-2">
+							<Image src={USD_IMAGE_PATH} alt="USD" width={20} height={20} />
 							US Dollars (USD)
 						</Label>
 						<div className="relative">
@@ -74,7 +75,7 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 								type="number"
 								value={usd}
 								onChange={(e) => handleUsdChange(e.target.value)}
-								className="pl-8"
+								className="pl-8 text-lg h-12"
 								placeholder="0.00"
 								step="0.01"
 							/>
@@ -82,14 +83,8 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="sats" className="text-sm font-medium">
-							Satoshis (sats)
-						</Label>
-						<Input id="sats" type="number" value={sats} onChange={(e) => handleSatsChange(e.target.value)} placeholder="0" step="1" />
-					</div>
-
-					<div className="space-y-2">
-						<Label htmlFor="btc" className="text-sm font-medium">
+						<Label htmlFor="btc" className="text-base font-medium flex items-center gap-2">
+							<Image src={BITCOIN_IMAGE_PATH} alt="Bitcoin" width={20} height={20} />
 							Bitcoin (BTC)
 						</Label>
 						<div className="relative">
@@ -99,16 +94,32 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 								type="number"
 								value={btc}
 								onChange={(e) => handleBtcChange(e.target.value)}
-								className="pl-8"
+								className="pl-8 text-lg h-12"
 								placeholder="0.00000000"
 								step="0.00000001"
 							/>
 						</div>
 					</div>
 
-					<div className="text-xs text-muted-foreground text-center pt-4 border-t">
+					<div className="space-y-2">
+						<Label htmlFor="sats" className="text-base font-medium flex items-center gap-2">
+							<Image src={SATS_IMAGE_PATH} alt="Satoshis" width={20} height={20} />
+							Satoshis (sats)
+						</Label>
+						<Input
+							id="sats"
+							type="number"
+							value={sats}
+							onChange={(e) => handleSatsChange(e.target.value)}
+							placeholder="0"
+							step="1"
+							className="text-lg h-12"
+						/>
+					</div>
+
+					<div className="text-sm text-muted-foreground text-center pt-4 border-t">
 						<p>1 BTC = 100,000,000 satoshis</p>
-						<p>1 satoshi = $0.001 (at current mock price)</p>
+						<p>1 satoshi = ${((1 / SATS_PER_BTC) * btcPrice).toFixed(8)} (at current price)</p>
 					</div>
 				</CardContent>
 			</Card>
