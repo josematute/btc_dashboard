@@ -27,7 +27,7 @@ export default async function BlockPage({ params }: { params: Promise<{ id: stri
 	return (
 		<div
 			className={cn(
-				"space-y-6 max-w-6xl mx-auto py-6 px-4",
+				"space-y-6 py-6 px-4",
 				isSpecialBlock &&
 					"relative before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-r before:from-yellow-500/5 before:via-amber-500/5 before:to-yellow-500/5 before:animate-gradient-x before:rounded-3xl"
 			)}>

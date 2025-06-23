@@ -2,10 +2,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function Loading() {
 	return (
-		<div className="max-w-6xl mx-auto py-6 px-4 space-y-6">
+		<div className="space-y-6 py-6 px-4">
 			<div>
-				<Skeleton className="h-9 w-[200px]" />
-				<Skeleton className="h-5 w-[300px] mt-1" />
+				<h1 className="text-3xl font-bold tracking-tight">Bitcoin Dashboard</h1>
+				<p className="text-muted-foreground mt-1">Real-time overview of the Bitcoin blockchain</p>
 			</div>
 
 			{/* Latest Blocks Section */}
@@ -31,6 +31,9 @@ export default function Loading() {
 					<Skeleton key={i} className="h-[200px] w-full" />
 				))}
 			</div>
+
+			{/* Bitcoin Block Museum */}
+			<Skeleton className="h-[300px] w-full" />
 		</div>
 	)
 }

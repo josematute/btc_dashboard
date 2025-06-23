@@ -2,6 +2,27 @@
 
 import { Block } from "./types"
 
+
+export async function getBitcoinInfo() {
+  try {
+    const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/info`, {
+      cache: "no-store"
+    })
+
+    if (!res.ok) {
+      console.error("Failed to fetch Bitcoin info:", await res.text())
+      return { blockchain: null, network: null, mempool: null }
+    }
+
+    const data = await res.json()
+    return data
+  } catch (error) {
+    console.error("Error fetching Bitcoin info:", error)
+    return { blockchain: null, network: null, mempool: null }
+  }
+}
+
+
 export async function getMoreBlocks(page: number, pageSize: number): Promise<Block[]> {
   console.log("getMoreBlocks", page, pageSize)
   try {

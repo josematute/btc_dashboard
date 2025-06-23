@@ -4,39 +4,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import Image from "next/image"
 import { Blocks, Network, Database, Clock, Info } from "lucide-react"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
-import { getLatestBlocks } from "@/lib/block-actions"
+import { getLatestBlocks, getBitcoinInfo } from "@/lib/block-actions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { BitcoinValue } from "@/components/bitcoin-value"
 import { BitcoinBlockMuseum } from "@/components/bitcoin-block-museum"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 
-async function getBitcoinInfo() {
-	try {
-		// await new Promise((resolve) => setTimeout(resolve, 100000))
-		const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/info`, {
-			cache: "no-store"
-		})
-
-		if (!res.ok) {
-			console.error("Failed to fetch Bitcoin info:", await res.text())
-			return { blockchain: null, network: null, mempool: null }
-		}
-
-		const data = await res.json()
-		return data
-	} catch (error) {
-		console.error("Error fetching Bitcoin info:", error)
-		return { blockchain: null, network: null, mempool: null }
-	}
-}
-
-// Dashboard content component
-async function DashboardContent() {
+export default async function Home() {
 	const { blockchain, network, mempool } = await getBitcoinInfo()
 	const { blocks } = await getLatestBlocks(10)
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 py-6 px-4">
 			<div>
 				<h1 className="text-3xl font-bold tracking-tight">Bitcoin Dashboard</h1>
 				<p className="text-muted-foreground mt-1">Real-time overview of the Bitcoin blockchain</p>
@@ -156,14 +135,6 @@ async function DashboardContent() {
 
 			{/* Bitcoin Block Museum */}
 			<BitcoinBlockMuseum />
-		</div>
-	)
-}
-
-export default function Home() {
-	return (
-		<div className="max-w-6xl mx-auto py-6 px-4">
-			<DashboardContent />
 		</div>
 	)
 }

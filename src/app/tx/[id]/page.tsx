@@ -21,7 +21,7 @@ export default async function TransactionPage({ params }: { params: Promise<{ id
 	const totalOutput = tx.vout.reduce((sum: number, output: TxOutput) => sum + output.value, 0)
 
 	return (
-		<div className="space-y-6 max-w-6xl mx-auto py-6 px-4">
+		<div className="space-y-6 py-6 px-4">
 			<div className="flex items-center gap-2">
 				<Link href={`/block/${tx.blockhash}`} className="rounded-md border p-2 inline-flex items-center justify-center hover:bg-muted">
 					<ArrowLeft className="h-4 w-4" />

@@ -28,13 +28,13 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
-				<UnitProvider>
-					<div className="flex flex-col min-h-screen">
+				<div className="flex flex-col min-h-screen">
+					<UnitProvider>
 						<Navbar />
-						<main className="flex-grow w-full flex flex-col">{children}</main>
+						<main className="flex-grow w-full flex flex-col max-w-6xl mx-auto">{children}</main>
 						<Toaster />
-					</div>
-				</UnitProvider>
+					</UnitProvider>
+				</div>
 			</body>
 		</html>
 	)
