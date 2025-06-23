@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Image from "next/image"
 
 interface YearData {
 	year: number
@@ -415,6 +416,53 @@ export default function FCFCalculator() {
 									))}
 								</TableBody>
 							</Table>
+						</div>
+					</CardContent>
+				</Card>
+
+				{/* YouTube Video Section */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Learn More About Bitcoin Collateralized Loans</CardTitle>
+						<CardDescription>Educational content by Mark Moss</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<div className="flex flex-col items-center space-y-4">
+							<div className="relative w-full max-w-2xl">
+								<a
+									href="https://www.youtube.com/watch?v=0dbBQyIGT_4&t=1283s"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="block relative group">
+									<Image
+										src="https://img.youtube.com/vi/0dbBQyIGT_4/hqdefault.jpg"
+										alt="A Bitcoin Strategy for Tax-Free Income"
+										width={0}
+										height={0}
+										sizes="100vw"
+										className="w-full h-auto rounded-lg shadow-lg group-hover:shadow-xl transition-shadow duration-300"
+									/>
+									<div className="absolute inset-0 flex items-center justify-center">
+										<div className="bg-red-600 rounded-full p-3 group-hover:bg-red-700 transition-colors duration-300">
+											<svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+												<path d="M8 5v14l11-7z" />
+											</svg>
+										</div>
+									</div>
+								</a>
+							</div>
+							<div className="text-center">
+								<p className="text-sm text-muted-foreground">
+									Blueprint for tax-free income starts at 21:23 - Educational content by{" "}
+									<a
+										href="https://www.youtube.com/@1MarkMoss"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-primary hover:underline font-medium">
+										Mark Moss
+									</a>
+								</p>
+							</div>
 						</div>
 					</CardContent>
 				</Card>
