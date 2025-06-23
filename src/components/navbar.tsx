@@ -13,6 +13,7 @@ import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 export function Navbar() {
 	const [isOpen, setIsOpen] = useState(false)
 	const isSatsConverterPage = usePathname() === "/sats-converter"
+	const isFCFCalculatorPage = usePathname() === "/fcf-calculator"
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 h-16">
@@ -28,6 +29,13 @@ export function Navbar() {
 							<Link href="/sats-converter">
 								<Button variant="outline" size="sm" className="cursor-pointer">
 									Sats Converter
+								</Button>
+							</Link>
+						)}
+						{!isFCFCalculatorPage && (
+							<Link href="/fcf-calculator">
+								<Button variant="outline" size="sm" className="cursor-pointer">
+									FCF Calculator
 								</Button>
 							</Link>
 						)}

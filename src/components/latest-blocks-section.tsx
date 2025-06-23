@@ -9,6 +9,7 @@ import Link from "next/link"
 import { getMoreBlocks } from "@/lib/block-actions"
 import { LoadingSpinner } from "./loading-spinner"
 import { Block } from "@/lib/types"
+import { usePathname } from "next/navigation"
 
 interface LatestBlocksSectionProps {
 	initialBlocks: Block[]
@@ -20,6 +21,8 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 	const [isLoading, setIsLoading] = useState(false)
 	const [page, setPage] = useState(1)
 	const pageSize = initialPageSize
+	const pathname = usePathname()
+	const isBlocksPage = pathname === "/blocks"
 
 	async function loadMoreBlocks() {
 		setIsLoading(true)
@@ -48,9 +51,11 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 				</CardTitle>
 				<CardDescription>
 					The most recently mined blocks on the Bitcoin blockchain{" "}
-					<Link href="/blocks" className="text-primary hover:underline text-md font-semibold ml-2">
-						View all
-					</Link>
+					{!isBlocksPage && (
+						<Link href="/blocks" className="text-primary hover:underline text-md font-semibold ml-2">
+							View all
+						</Link>
+					)}
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
