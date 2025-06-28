@@ -1,4 +1,4 @@
-import SatsConverter from "@/components/sats-converter"
+import SatsConverter from "@/components/sats-converter/sats-converter"
 import SatsConverterError from "./error"
 import { getBitcoinPrice } from "@/lib/price-actions"
 

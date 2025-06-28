@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'vitest'
-import { formatCurrency, formatAssetPrice } from '@/lib/utils/prices.utils'
+import { formatCurrency, formatAssetPrice, removeNonDigitsAndCommas } from '@/lib/utils/prices.utils'
 
 describe('formatCurrency', () => {
   it('should format basic numbers with default 2 decimals', () => {
@@ -110,6 +110,16 @@ describe('formatWithCommas', () => {
 
     it('should handle multiple decimal points', () => {
       expect(formatAssetPrice('1.2.3')).toBe('1.2.3')
+    })
+  })
+
+  describe('removeNonDigitsAndCommas', () => {
+    it('should remove non-digits and commas', () => {
+      expect(removeNonDigitsAndCommas('1,000,000.6')).toBe('1000000.6')
+      expect(removeNonDigitsAndCommas('1,000.555')).toBe('1000.555')
+      expect(removeNonDigitsAndCommas('1,000,abc')).toBe('1000')
+      expect(removeNonDigitsAndCommas('abc')).toBe('')
+      expect(removeNonDigitsAndCommas('1.2.3')).toBe('1.2.3')
     })
   })
 })

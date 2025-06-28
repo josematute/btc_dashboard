@@ -95,3 +95,13 @@ export const formatAssetPrice = (value: string, preserveSignificantDigits?: bool
   // Join back with decimal if it exists
   return parts.join(".")
 }
+
+/**
+ * Remove any non-digit, non-decimal characters and commas
+ *
+ * @param value - The string to remove non-digits and commas from
+ * @returns The string with non-digits and commas removed
+ */
+export const removeNonDigitsAndCommas = (value: string) => {
+  return value.replace(/[^0-9.]/g, "")
+}
