@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 export default function Loading() {
 	return (
-		<div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4 py-8">
+		<div className="flex items-center justify-center px-4 py-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">

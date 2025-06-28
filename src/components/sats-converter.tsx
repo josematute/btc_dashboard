@@ -6,34 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Bitcoin } from "lucide-react"
 import { SATS_PER_BTC, BITCOIN_IMAGE_PATH, SATS_IMAGE_PATH, USD_IMAGE_PATH } from "@/lib/constants"
+import { formatWithCommas, formatBitcoin, parseFormattedNumber } from "@/lib/utils/prices.utils"
 import Image from "next/image"
 
 interface SatsConverterProps {
 	btcPrice: number
-}
-
-// Helper function to format number with commas
-const formatWithCommas = (value: string | number): string => {
-	const num = typeof value === "string" ? parseFloat(value) : value
-	if (isNaN(num)) return ""
-	return num.toLocaleString("en-US", { maximumFractionDigits: 8 })
-}
-
-// Helper function to format Bitcoin with conditional comma formatting
-const formatBitcoin = (value: string | number): string => {
-	const num = typeof value === "string" ? parseFloat(value) : value
-	if (isNaN(num)) return ""
-	// Only format with commas if value is 100 or greater
-	if (num >= 100) {
-		return num.toLocaleString("en-US", { maximumFractionDigits: 8 })
-	}
-	// For values under 100, return as string without comma formatting
-	return num.toString()
-}
-
-// Helper function to parse comma-formatted string to number
-const parseFormattedNumber = (value: string): number => {
-	return parseFloat(value.replace(/,/g, "")) || 0
 }
 
 export default function SatsConverter({ btcPrice }: SatsConverterProps) {
@@ -122,7 +99,7 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 	}
 
 	return (
-		<div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4 py-8">
+		<div className="flex items-center justify-center px-4 py-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">

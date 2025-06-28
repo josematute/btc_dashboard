@@ -53,7 +53,6 @@ export async function getMoreBlocks(page: number, pageSize: number): Promise<Blo
 export async function getBlock(blockId: string): Promise<Block | null> {
   console.log("getBlock", blockId)
   try {
-    // Use our internal API route
     const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/block/${blockId}`, {
       cache: "no-store",
     })
@@ -75,7 +74,6 @@ export async function getLatestBlocks(pageSize: number = 10): Promise<{ blocks: 
   console.log("getLatestBlocks", pageSize)
 
   try {
-    // Use our internal API route
     const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/blocks?pageSize=${pageSize}`, {
       cache: "no-store",
     })

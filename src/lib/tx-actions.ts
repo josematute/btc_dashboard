@@ -4,8 +4,6 @@ import { Tx } from "./types"
 
 export async function getTransaction(txid: string): Promise<Tx | null> {
   try {
-
-    // Use our internal API route
     const res = await fetch(`${process.env.BTC_SERVER_URL}/api/v1/btc/tx/${txid}`, {
       cache: "no-store",
     })

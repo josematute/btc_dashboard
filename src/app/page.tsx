@@ -1,14 +1,13 @@
 import { StatCard } from "@/components/stat-card"
 import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
-import { Blocks, Network, Database, Clock, Info } from "lucide-react"
+import { Blocks, Network, Database } from "lucide-react"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
 import { getLatestBlocks, getBitcoinInfo } from "@/lib/block-actions"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { BitcoinValue } from "@/components/bitcoin-value"
 import { BitcoinBlockMuseum } from "@/components/bitcoin-block-museum"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
+import { NetworkInfoCard } from "@/components/dashboard/network-info-card"
+import { BlockchainStats } from "@/components/dashboard/blockchain-stats"
 
 // Force dynamic rendering since we need to fetch live data
 export const dynamic = "force-dynamic"
@@ -56,84 +55,8 @@ export default async function Home() {
 			</div>
 
 			<div className="grid gap-4 md:grid-cols-2">
-				<Card>
-					<CardHeader>
-						<CardTitle className="flex items-center gap-2">
-							<Clock className="h-5 w-5" />
-							<span>Blockchain Stats</span>
-						</CardTitle>
-						<CardDescription>Current state of the Bitcoin blockchain</CardDescription>
-					</CardHeader>
-					<CardContent className="grid gap-4">
-						<div>
-							<div className="flex items-center gap-2">
-								<p className="text-sm font-medium text-muted-foreground">Difficulty Adjustment</p>
-								<TooltipProvider>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Info className="h-4 w-4 text-muted-foreground" />
-										</TooltipTrigger>
-										<TooltipContent className="max-w-[300px]">
-											<p>
-												The current mining difficulty target. This number represents how difficult it is to find a hash below the target
-												value. Higher numbers mean more computational work is required to mine new blocks.
-											</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
-							</div>
-							<p className="text-lg font-semibold break-all">{formatNumber(blockchain.difficulty)}</p>
-						</div>
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<p className="text-sm font-medium text-muted-foreground">Size on Disk</p>
-								<p className="text-lg font-semibold">{formatBytes(blockchain.size_on_disk)}</p>
-							</div>
-							<div>
-								<p className="text-sm font-medium text-muted-foreground">Version</p>
-								<p className="text-lg font-semibold">{network.subversion}</p>
-							</div>
-							<div>
-								<p className="text-sm font-medium text-muted-foreground">Mempool Fee</p>
-								<p className="text-lg font-semibold">
-									<BitcoinValue value={mempool.total_fee || 0} />
-								</p>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader>
-						<CardTitle>Network Status</CardTitle>
-						<CardDescription>Current Bitcoin network information</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<div className="space-y-4">
-							<div>
-								<p className="text-sm font-medium text-muted-foreground">Network Services</p>
-								<div className="flex flex-wrap gap-2 mt-1">
-									{network.localservicesnames.map((service: string) => (
-										<div key={service} className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs">
-											{service}
-										</div>
-									))}
-								</div>
-							</div>
-							<div>
-								<p className="text-sm font-medium text-muted-foreground">Network Status</p>
-								<div className="grid grid-cols-2 gap-2 mt-1">
-									{network.networks?.map((network: { name: string; reachable: boolean }) => (
-										<div key={network.name} className="flex items-center gap-2">
-											<div className={`h-2 w-2 rounded-full ${network.reachable ? "bg-green-500" : "bg-red-500"}`} />
-											<span className="text-sm">{network.name}</span>
-										</div>
-									))}
-								</div>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
+				<BlockchainStats blockchain={blockchain} networkInfo={network} mempool={mempool} />
+				<NetworkInfoCard networkInfo={network} />
 			</div>
 
 			{/* Bitcoin Block Museum */}
