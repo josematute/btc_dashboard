@@ -20,23 +20,6 @@ export const formatCurrency = (value: number, decimals = 2) => {
   }).format(value)
 }
 
-
-/**
- * Parse a comma-formatted string to a number
- *
- * @example
- * parseFormattedNumber("1,000.50") // 1000.5
- * parseFormattedNumber("1000") // 1000
- * parseFormattedNumber("invalid") // 0
- * @param value - The comma-formatted string to parse
- * @returns The parsed number, or 0 if invalid
- */
-export const parseFormattedNumber = (value: string): number => {
-  return parseFloat(value.replace(/,/g, "")) || 0
-}
-
-
-
 /**
  * Format a number with commas, preserving significant digits
  *
@@ -52,7 +35,7 @@ export const parseFormattedNumber = (value: string): number => {
  * @param preserveSignificantDigits - Whether to preserve significant digits
  * @returns The formatted number string
  */
-export const formatWithCommas = (value: string, preserveSignificantDigits?: boolean): string => {
+export const formatAssetPrice = (value: string, preserveSignificantDigits?: boolean): string => {
   // Remove existing commas
   const cleanValue = value.replace(/,/g, "")
 

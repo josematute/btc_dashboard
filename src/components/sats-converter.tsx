@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Bitcoin } from "lucide-react"
 import { BITCOIN_IMAGE_PATH, SATS_IMAGE_PATH, USD_IMAGE_PATH } from "@/lib/constants"
 import Image from "next/image"
-import { formatWithCommas } from "@/lib/utils/prices.utils"
+import { formatAssetPrice } from "@/lib/utils/prices.utils"
 
 const SATS_PER_BTC = 100000000
 const DEFAULT_USD_VALUE = "100"
@@ -43,7 +43,7 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 		}
 
 		// Format with commas
-		const formatted = formatWithCommas(withoutCommas)
+		const formatted = formatAssetPrice(withoutCommas)
 
 		// Set the value
 		setValue(formatted)
@@ -61,20 +61,20 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 				const btc = numValue / effectivePrice
 				const sats = btc * SATS_PER_BTC
 
-				setBtcValue(formatWithCommas(btc.toString(), true))
-				setSatsValue(formatWithCommas(Math.round(sats).toString()))
+				setBtcValue(formatAssetPrice(btc.toString(), true))
+				setSatsValue(formatAssetPrice(Math.round(sats).toString()))
 			} else if (source === "btc") {
 				const usd = numValue * effectivePrice
 				const sats = numValue * SATS_PER_BTC
 
-				setUsdValue(formatWithCommas(usd.toString(), true))
-				setSatsValue(formatWithCommas(Math.round(sats).toString()))
+				setUsdValue(formatAssetPrice(usd.toString(), true))
+				setSatsValue(formatAssetPrice(Math.round(sats).toString()))
 			} else if (source === "sats") {
 				const btc = numValue / SATS_PER_BTC
 				const usd = btc * effectivePrice
 
-				setUsdValue(formatWithCommas(usd.toString(), true))
-				setBtcValue(formatWithCommas(btc.toString(), true))
+				setUsdValue(formatAssetPrice(usd.toString(), true))
+				setBtcValue(formatAssetPrice(btc.toString(), true))
 			}
 		},
 		[effectivePrice]
@@ -113,7 +113,7 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 							</>
 						) : (
 							<>
-								Using Custom Price: <span className="font-semibold text-blue-600">${formatWithCommas(customPrice)}</span>
+								Using Custom Price: <span className="font-semibold text-blue-600">${formatAssetPrice(customPrice)}</span>
 							</>
 						)}
 					</div>
