@@ -1,105 +1,158 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Bitcoin } from "lucide-react"
-import { SATS_PER_BTC, BITCOIN_IMAGE_PATH, SATS_IMAGE_PATH, USD_IMAGE_PATH } from "@/lib/constants"
-import { formatWithCommas, formatBitcoin, parseFormattedNumber } from "@/lib/utils/prices.utils"
-import Image from "next/image"
+
+const SATS_PER_BTC = 100000000
+const DEFAULT_USD_VALUE = "100"
 
 interface SatsConverterProps {
 	btcPrice: number
 }
 
 export default function SatsConverter({ btcPrice }: SatsConverterProps) {
-	const [usd, setUsd] = useState("100")
-	const [sats, setSats] = useState("10,000,000")
-	const [btcDisplay, setBtcDisplay] = useState("0.001") // Raw display value for BTC input
-	const [useCustomPrice, setUseCustomPrice] = useState(false)
-	const [customPrice, setCustomPrice] = useState(formatWithCommas(btcPrice))
+	const [usdValue, setUsdValue] = useState<string>(DEFAULT_USD_VALUE)
+	const [btcValue, setBtcValue] = useState<string>("")
+	const [satsValue, setSatsValue] = useState<string>("")
 
-	// Get the current effective price (custom or real)
-	const effectivePrice = useCustomPrice ? parseFormattedNumber(customPrice) || btcPrice : btcPrice
+	const [useCustomPrice, setUseCustomPrice] = useState<boolean>(false)
+	const [customPrice, setCustomPrice] = useState<string>(btcPrice.toString())
+	const [lastChanged, setLastChanged] = useState<string>("usd")
 
-	const handleUsdChange = (value: string) => {
+	const effectivePrice = useCustomPrice ? Number.parseFloat(customPrice.replace(/,/g, "")) || btcPrice : btcPrice
+
+	// Format number with commas, preserving significant digits
+	const formatWithCommas = (value: string, preserveSignificantDigits?: boolean): string => {
+		// Remove existing commas
 		const cleanValue = value.replace(/,/g, "")
-		setUsd(cleanValue)
-		const usdValue = parseFloat(cleanValue) || 0
-		const btcValue = usdValue / effectivePrice
-		const satsValue = btcValue * SATS_PER_BTC
 
-		const btcResult = btcValue.toFixed(8)
-		setBtcDisplay(formatBitcoin(btcResult))
-		setSats(formatWithCommas(Math.round(satsValue)))
+		// If empty or just a decimal point, return as is
+		if (!cleanValue || cleanValue === ".") return cleanValue
+
+		// If preserveSignificantDigits is true, keep all significant digits
+		let processedValue = cleanValue
+		if (preserveSignificantDigits) {
+			const num = Number.parseFloat(cleanValue)
+			if (!isNaN(num)) {
+				// Custom formatting based on value size
+				if (Math.abs(num) >= 1) {
+					// For numbers >= 1, limit to 2 decimal places
+					processedValue = parseFloat(num.toFixed(2)).toString()
+				} else if (num === 0) {
+					processedValue = "0"
+				} else {
+					// For numbers < 1, show leading zeros + first 2 non-zero digits
+					// Use toFixed with high precision to avoid scientific notation
+					const numStr = num.toFixed(20).replace(/\.?0+$/, "")
+					const [, decimal] = numStr.split(".")
+
+					if (decimal) {
+						// Find the first non-zero digit
+						let firstNonZeroIndex = -1
+						for (let i = 0; i < decimal.length; i++) {
+							if (decimal[i] !== "0") {
+								firstNonZeroIndex = i
+								break
+							}
+						}
+
+						if (firstNonZeroIndex !== -1) {
+							// Take leading zeros + first 2 non-zero digits
+							const leadingZeros = decimal.substring(0, firstNonZeroIndex)
+							const nonZeroDigits = decimal.substring(firstNonZeroIndex)
+							const firstTwoNonZero = nonZeroDigits.substring(0, 2)
+
+							processedValue = `0.${leadingZeros}${firstTwoNonZero}`
+						} else {
+							processedValue = "0"
+						}
+					} else {
+						processedValue = numStr
+					}
+				}
+			}
+		}
+
+		// Split by decimal point
+		const parts = processedValue.split(".")
+
+		// Format the integer part with commas
+		parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
+		// Join back with decimal if it exists
+		return parts.join(".")
 	}
 
-	const handleSatsChange = (value: string) => {
-		const cleanValue = value.replace(/,/g, "")
-		setSats(formatWithCommas(cleanValue))
-		const satsValue = parseFloat(cleanValue) || 0
-		const btcValue = satsValue / SATS_PER_BTC
-		const usdValue = btcValue * effectivePrice
+	// Validate and format input
+	const handleInputChange = (value: string, setValue: (val: string) => void, source: string) => {
+		// Remove any non-digit, non-decimal, non-comma characters
+		const cleaned = value.replace(/[^0-9.,]/g, "")
 
-		const btcResult = btcValue.toFixed(8)
-		setBtcDisplay(formatBitcoin(btcResult))
-		setUsd(usdValue.toFixed(2))
+		// Remove commas for processing
+		let withoutCommas = cleaned.replace(/,/g, "")
+
+		// Ensure only one decimal point
+		const parts = withoutCommas.split(".")
+		if (parts.length > 2) {
+			withoutCommas = parts[0] + "." + parts.slice(1).join("")
+		}
+
+		// Format with commas
+		const formatted = formatWithCommas(withoutCommas)
+
+		// Set the value
+		setValue(formatted)
+
+		// Calculate other values
+		calculateValues(source, withoutCommas)
 	}
 
-	const handleBtcChange = (value: string) => {
-		const cleanValue = value.replace(/,/g, "")
-		setBtcDisplay(value) // Store the raw input for display
-		const btcValue = parseFloat(cleanValue) || 0
-		const usdValue = btcValue * effectivePrice
-		const satsValue = btcValue * SATS_PER_BTC
+	// Calculate other values based on source
+	const calculateValues = (source: string, rawValue: string) => {
+		const numValue = Number.parseFloat(rawValue) || 0
 
-		setUsd(usdValue.toFixed(2))
-		setSats(formatWithCommas(Math.round(satsValue)))
-	}
+		if (source === "usd") {
+			const btc = numValue / effectivePrice
+			const sats = btc * SATS_PER_BTC
 
-	const handleCustomPriceToggle = (checked: boolean) => {
-		setUseCustomPrice(checked)
-		if (checked && parseFormattedNumber(customPrice) !== btcPrice) {
-			// Recalculate with custom price
-			const usdValue = parseFloat(usd) || 0
-			const newEffectivePrice = parseFormattedNumber(customPrice) || btcPrice
-			const btcValue = usdValue / newEffectivePrice
-			const satsValue = btcValue * SATS_PER_BTC
+			setBtcValue(formatWithCommas(btc.toString(), true))
+			setSatsValue(formatWithCommas(Math.round(sats).toString()))
+		} else if (source === "btc") {
+			const usd = numValue * effectivePrice
+			const sats = numValue * SATS_PER_BTC
 
-			const btcResult = btcValue.toFixed(8)
-			setBtcDisplay(formatBitcoin(btcResult))
-			setSats(formatWithCommas(Math.round(satsValue)))
-		} else if (!checked) {
-			// Recalculate with real price
-			const usdValue = parseFloat(usd) || 0
-			const btcValue = usdValue / btcPrice
-			const satsValue = btcValue * SATS_PER_BTC
+			setUsdValue(formatWithCommas(usd.toString(), true))
+			setSatsValue(formatWithCommas(Math.round(sats).toString()))
+		} else if (source === "sats") {
+			const btc = numValue / SATS_PER_BTC
+			const usd = btc * effectivePrice
 
-			const btcResult = btcValue.toFixed(8)
-			setBtcDisplay(formatBitcoin(btcResult))
-			setSats(formatWithCommas(Math.round(satsValue)))
+			setUsdValue(formatWithCommas(usd.toString(), true))
+			setBtcValue(formatWithCommas(btc.toString(), true))
 		}
 	}
 
-	const handleCustomPriceChange = (value: string) => {
-		const cleanValue = value.replace(/,/g, "")
-		setCustomPrice(formatWithCommas(cleanValue))
-		if (useCustomPrice) {
-			// Recalculate with new custom price
-			const usdValue = parseFloat(usd) || 0
-			const newPrice = parseFloat(cleanValue) || btcPrice
-			const btcValue = usdValue / newPrice
-			const satsValue = btcValue * SATS_PER_BTC
+	// Initialize values
+	useEffect(() => {
+		calculateValues("usd", "100")
+	}, [effectivePrice])
 
-			const btcResult = btcValue.toFixed(8)
-			setBtcDisplay(formatBitcoin(btcResult))
-			setSats(formatWithCommas(Math.round(satsValue)))
+	const handleCustomPriceChange = (value: string) => {
+		handleInputChange(value, setCustomPrice, "price")
+		if (useCustomPrice) {
+			const currentSource = lastChanged
+			const currentValue = currentSource === "usd" ? usdValue : currentSource === "btc" ? btcValue : satsValue
+			calculateValues(currentSource, currentValue.replace(/,/g, ""))
 		}
 	}
 
 	return (
-		<div className="flex items-center justify-center px-4 py-8">
+		<div className="flex items-center justify-center px-4 py-8" data-testid="sats-converter">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
 					<div className="flex items-center justify-center gap-2 mb-2">
@@ -113,11 +166,11 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 						{!useCustomPrice ? (
 							<>
 								Bitcoin Price: <span className="font-semibold text-orange-600">${btcPrice.toLocaleString()}</span>
-								<span className="text-xs block mt-1">(Live from CoinGecko)</span>
+								<span className="text-xs block mt-1">(Live CoinGecko Price)</span>
 							</>
 						) : (
 							<>
-								Using Custom Price: <span className="font-semibold text-blue-600">${formatWithCommas(effectivePrice)}</span>
+								Using Custom Price: <span className="font-semibold text-blue-600">${formatWithCommas(customPrice)}</span>
 							</>
 						)}
 					</div>
@@ -129,7 +182,7 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 								type="checkbox"
 								id="useCustomPrice"
 								checked={useCustomPrice}
-								onChange={(e) => handleCustomPriceToggle(e.target.checked)}
+								onChange={(e) => setUseCustomPrice(e.target.checked)}
 								className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
 							/>
 							<label htmlFor="useCustomPrice" className="text-sm font-medium cursor-pointer">
@@ -149,7 +202,7 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 										type="text"
 										value={customPrice}
 										onChange={(e) => handleCustomPriceChange(e.target.value)}
-										className="pl-8 text-base"
+										className="pl-8 h-12"
 										placeholder="100,000"
 									/>
 								</div>
@@ -157,10 +210,10 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 						)}
 					</div>
 				</CardHeader>
+
 				<CardContent className="space-y-6">
 					<div className="space-y-2">
-						<Label htmlFor="usd" className="text-base font-medium flex items-center gap-2">
-							<Image src={USD_IMAGE_PATH} alt="USD" width={20} height={20} />
+						<Label htmlFor="usd" className="text-base font-medium">
 							US Dollars (USD)
 						</Label>
 						<div className="relative">
@@ -168,17 +221,19 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 							<Input
 								id="usd"
 								type="text"
-								value={formatWithCommas(usd)}
-								onChange={(e) => handleUsdChange(e.target.value)}
-								className="pl-8 text-lg h-12"
-								placeholder="0.00"
+								value={usdValue}
+								onChange={(e) => {
+									setLastChanged("usd")
+									handleInputChange(e.target.value, setUsdValue, "usd")
+								}}
+								className="pl-8 h-12"
+								placeholder="100"
 							/>
 						</div>
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="btc" className="text-base font-medium flex items-center gap-2">
-							<Image src={BITCOIN_IMAGE_PATH} alt="Bitcoin" width={20} height={20} />
+						<Label htmlFor="btc" className="text-base font-medium">
 							Bitcoin (BTC)
 						</Label>
 						<div className="relative">
@@ -186,28 +241,32 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 							<Input
 								id="btc"
 								type="text"
-								value={btcDisplay}
-								onChange={(e) => handleBtcChange(e.target.value)}
-								onBlur={(e) => {
-									// Format the value when user finishes editing
-									const cleanValue = e.target.value.replace(/,/g, "")
-									const numValue = parseFloat(cleanValue)
-									if (!isNaN(numValue)) {
-										setBtcDisplay(formatBitcoin(numValue))
-									}
+								value={btcValue}
+								onChange={(e) => {
+									setLastChanged("btc")
+									handleInputChange(e.target.value, setBtcValue, "btc")
 								}}
-								className="pl-8 text-lg h-12"
-								placeholder="0.00000000"
+								className="pl-8 h-12"
+								placeholder="0.001"
 							/>
 						</div>
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="sats" className="text-base font-medium flex items-center gap-2">
-							<Image src={SATS_IMAGE_PATH} alt="Satoshis" width={20} height={20} />
+						<Label htmlFor="sats" className="text-base font-medium">
 							Satoshis (sats)
 						</Label>
-						<Input id="sats" type="text" value={sats} onChange={(e) => handleSatsChange(e.target.value)} placeholder="0" className="text-lg h-12" />
+						<Input
+							id="sats"
+							type="text"
+							value={satsValue}
+							onChange={(e) => {
+								setLastChanged("sats")
+								handleInputChange(e.target.value, setSatsValue, "sats")
+							}}
+							placeholder="100,000"
+							className="h-12"
+						/>
 					</div>
 
 					<div className="text-sm text-muted-foreground text-center pt-4 border-t">
