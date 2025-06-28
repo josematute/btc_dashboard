@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Blocks, Network, Database } from "lucide-react"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
 import { getLatestBlocks, getBitcoinInfo } from "@/lib/block-actions"
-import { BitcoinBlockMuseum } from "@/components/bitcoin-block-museum"
+import { FamousBlocks } from "@/components/dashboard/famous-blocks"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 import { NetworkInfoCard } from "@/components/dashboard/network-info-card"
 import { BlockchainStats } from "@/components/dashboard/blockchain-stats"
@@ -17,10 +17,14 @@ export default async function Home() {
 	const { blocks } = await getLatestBlocks(10)
 
 	return (
-		<div className="space-y-6 py-6 px-4">
+		<div className="space-y-6 py-6 px-4" data-testid="dashboard">
 			<div>
-				<h1 className="text-3xl font-bold tracking-tight">Bitcoin Dashboard</h1>
-				<p className="text-muted-foreground mt-1">Real-time overview of the Bitcoin blockchain</p>
+				<h1 className="text-3xl font-bold tracking-tight" data-testid="dashboard-title">
+					Bitcoin Dashboard
+				</h1>
+				<p className="text-muted-foreground mt-1" data-testid="dashboard-description">
+					Real-time overview of the Bitcoin blockchain
+				</p>
 			</div>
 
 			{/* Latest Blocks Section */}
@@ -33,24 +37,28 @@ export default async function Home() {
 					value={blockchain.chain.toUpperCase()}
 					description="Current blockchain"
 					icon={<Image src={BITCOIN_IMAGE_PATH} alt="Bitcoin" width={16} height={16} />}
+					data-testid="chain-stat"
 				/>
 				<StatCard
 					title="Block Height"
 					value={formatNumber(blockchain.blocks)}
 					description={`Last updated: ${formatDate(blockchain.time)}`}
 					icon={<Blocks className="h-4 w-4" />}
+					data-testid="block-height-stat"
 				/>
 				<StatCard
 					title="Connections"
 					value={network.connections}
 					description={`Out: ${network.connections_out}, In: ${network.connections_in}`}
 					icon={<Network className="h-4 w-4" />}
+					data-testid="connections-stat"
 				/>
 				<StatCard
 					title="Mempool"
 					value={mempool.size}
 					description={`${formatBytes(mempool.bytes)} in pending transactions`}
 					icon={<Database className="h-4 w-4" />}
+					data-testid="mempool-stat"
 				/>
 			</div>
 
@@ -60,7 +68,7 @@ export default async function Home() {
 			</div>
 
 			{/* Bitcoin Block Museum */}
-			<BitcoinBlockMuseum />
+			<FamousBlocks />
 		</div>
 	)
 }

@@ -36,12 +36,13 @@ export function BlockList({ blocks }: BlockListProps) {
 	}, [])
 
 	return (
-		<div className="space-y-2">
+		<div className="space-y-2" data-testid="block-list">
 			{blocks.map((block) => (
 				<Link
 					key={block.hash}
 					href={`block/${block.hash}`}
-					className="flex items-center justify-between border-b pb-3 hover:bg-muted/50 transition-colors">
+					className="flex items-center justify-between border-b pb-3 hover:bg-muted/50 transition-colors"
+					data-testid="block-list-item">
 					<div className="space-y-1 min-w-0 flex-1">
 						<div className="flex items-center gap-2">
 							<span className="font-mono text-sm font-medium shrink-0">{block.height}</span>

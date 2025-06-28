@@ -17,7 +17,7 @@ interface BlockchainStatsProps {
 
 export function BlockchainStats({ blockchain, networkInfo, mempool }: BlockchainStatsProps) {
 	return (
-		<Card>
+		<Card data-testid="blockchain-stats">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<Clock className="h-5 w-5" />

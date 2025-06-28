@@ -10,6 +10,7 @@ import { getMoreBlocks } from "@/lib/block-actions"
 import { LoadingSpinner } from "./loading-spinner"
 import { Block } from "@/lib/types"
 import { usePathname } from "next/navigation"
+import { toast } from "sonner"
 
 interface LatestBlocksSectionProps {
 	initialBlocks: Block[]
@@ -18,8 +19,8 @@ interface LatestBlocksSectionProps {
 
 export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBlocksSectionProps) {
 	const [blocks, setBlocks] = useState<Block[]>(initialBlocks)
-	const [isLoading, setIsLoading] = useState(false)
-	const [page, setPage] = useState(1)
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [page, setPage] = useState<number>(1)
 	const pageSize = initialPageSize
 	const pathname = usePathname()
 	const isBlocksPage = pathname === "/blocks"
@@ -37,22 +38,23 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 			}
 		} catch (error) {
 			console.error("Error loading more blocks:", error)
+			toast.error("Error loading more blocks")
 		} finally {
 			setIsLoading(false)
 		}
 	}
 
 	return (
-		<Card>
+		<Card data-testid="latest-blocks-section">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<Blocks className="h-4 w-4" />
 					<span>Latest Blocks</span>
 				</CardTitle>
 				<CardDescription>
-					The most recently mined blocks on the Bitcoin blockchain{" "}
+					The most recently mined blocks on the Bitcoin blockchain
 					{!isBlocksPage && (
-						<Link href="/blocks" className="text-primary hover:underline text-md font-semibold ml-2">
+						<Link href="/blocks" className="text-primary hover:underline text-md font-semibold ml-2" data-testid="view-all-blocks-link">
 							View all
 						</Link>
 					)}
@@ -66,7 +68,7 @@ export function LatestBlocksSection({ initialBlocks, initialPageSize }: LatestBl
 						<LoadingSpinner size="sm" message="Retrieving additional blocks..." />
 					</div>
 				) : (
-					<div className="mt-4 text-center">
+					<div className="mt-4 text-center" data-testid="load-more-blocks-button">
 						<Button variant="outline" onClick={loadMoreBlocks} disabled={isLoading} className="w-full cursor-pointer">
 							Load More Blocks
 						</Button>

@@ -12,14 +12,14 @@ const iconMap = {
 	Settings
 }
 
-export function BitcoinBlockMuseum() {
+export function FamousBlocks() {
 	return (
-		<Card>
+		<Card data-testid="famous-blocks">
 			<CardContent className="p-6">
 				<div className="space-y-4">
 					<div className="flex items-center justify-between">
-						<h2 className="text-2xl font-bold tracking-tight">Bitcoin Block Museum</h2>
-						<p className="text-sm text-muted-foreground">Historical milestones in Bitcoin&apos;s blockchain</p>
+						<h2 className="text-2xl font-bold tracking-tight">Famous Blocks</h2>
+						<p className="text-sm text-muted-foreground">Historical blocks in Bitcoin&apos;s blockchain</p>
 					</div>
 					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 						{Object.entries(SPECIAL_BLOCKS).map(([height, block]) => {

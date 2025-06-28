@@ -7,7 +7,7 @@ interface NetworkInfoCardProps {
 
 export function NetworkInfoCard({ networkInfo }: NetworkInfoCardProps) {
 	return (
-		<Card>
+		<Card data-testid="network-info-card">
 			<CardHeader>
 				<CardTitle>Network Status</CardTitle>
 				<CardDescription>Current Bitcoin network information</CardDescription>

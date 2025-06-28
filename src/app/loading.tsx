@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function Loading() {
 	return (
-		<div className="space-y-6 py-6 px-4">
+		<div className="space-y-6 py-6 px-4" data-testid="dashboard-loading">
 			<div>
 				<h1 className="text-3xl font-bold tracking-tight">Bitcoin Dashboard</h1>
 				<p className="text-muted-foreground mt-1">Real-time overview of the Bitcoin blockchain</p>

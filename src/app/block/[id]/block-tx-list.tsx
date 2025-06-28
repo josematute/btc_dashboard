@@ -21,7 +21,7 @@ export function BlockTxList({ txids, blockHeight }: BlockTxListProps) {
 	const currentTransactions = txids.slice(startIndex, endIndex)
 
 	return (
-		<Card>
+		<Card data-testid="block-tx-list">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					<Database className="h-5 w-5" />
