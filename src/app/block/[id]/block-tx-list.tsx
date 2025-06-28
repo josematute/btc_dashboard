@@ -68,11 +68,16 @@ export function BlockTxList({ txids, blockHeight }: BlockTxListProps) {
 
 				{/* Pagination */}
 				{totalPages > 1 && (
-					<div className="flex items-center justify-between mt-4">
-						<div className="text-sm text-muted-foreground">
-							Showing {startIndex + 1}-{Math.min(endIndex, txids.length)} of {txids.length} transactions
+					<div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4">
+						<div className="text-sm text-muted-foreground order-2 sm:order-1">
+							<span className="hidden sm:inline">
+								Showing {startIndex + 1}-{Math.min(endIndex, txids.length)} of {txids.length} transactions
+							</span>
+							<span className="sm:hidden">
+								{startIndex + 1}-{Math.min(endIndex, txids.length)} of {txids.length}
+							</span>
 						</div>
-						<div className="flex items-center gap-2">
+						<div className="flex items-center gap-2 order-1 sm:order-2">
 							<Button
 								variant="outline"
 								size="icon"
@@ -82,7 +87,7 @@ export function BlockTxList({ txids, blockHeight }: BlockTxListProps) {
 								<ChevronLeft className="h-4 w-4" />
 								<span className="sr-only">Previous page</span>
 							</Button>
-							<div className="flex items-center gap-1 px-4">
+							<div className="flex items-center gap-1 px-2 sm:px-4 whitespace-nowrap">
 								<span className="text-sm font-medium">Page</span>
 								<span className="text-sm">{currentPage}</span>
 								<span className="text-sm text-muted-foreground">of {totalPages}</span>

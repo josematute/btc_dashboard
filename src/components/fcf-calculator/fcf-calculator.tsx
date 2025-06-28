@@ -4,19 +4,16 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { YearData } from "@/lib/types"
-import { calculateYearData, getYearsUntil2049, updateBitcoinAGR } from "@/lib/utils/fcf-calculator.utils"
-import { formatCurrency } from "@/lib/utils/prices.utils"
-import { formatNumber } from "@/lib/utils/string.utils"
-import { HelpCircle } from "lucide-react"
+import { calculateYearData, getYearsUntil2049 } from "@/lib/utils/fcf-calculator.utils"
 import MarkMossReference from "./mark-moss-credit"
 import FCFVideoLink from "./fcf-video-link"
+import FCFCalculatorTable from "./fcf-calculator-table"
 
 const DEFAULT_HOLDINGS = 2
 const DEFAULT_STARTING_YEAR = 2026
@@ -61,7 +58,7 @@ export default function FCFCalculator({ btcPrice }: FCFCalculatorProps) {
 	}, [holdings, startingPrice, startingYear, interestRate, desiredCashflow, age])
 
 	return (
-		<div className="space-y-6 py-6 px-4">
+		<div className="space-y-6 py-6 px-4" id="fcf-calculator">
 			<TooltipProvider>
 				<Card>
 					<CardHeader>
@@ -218,186 +215,15 @@ export default function FCFCalculator({ btcPrice }: FCFCalculatorProps) {
 								Year-by-year breakdown showing Bitcoin value growth, loan amounts, interest payments, and your net free cash flow.
 							</p>
 							<div className="overflow-x-auto">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>Year</TableHead>
-											{showAge && <TableHead>Age</TableHead>}
-											<TableHead>Value</TableHead>
-
-											<TableHead>
-												<div className="flex items-center gap-1">
-													<span>AGR (%)</span>
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<HelpCircle className="h-3 w-3 cursor-help text-muted-foreground" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<p>Annual Growth Rate - The percentage change in Bitcoin price for this year</p>
-														</TooltipContent>
-													</Tooltip>
-												</div>
-											</TableHead>
-
-											<TableHead>Gain</TableHead>
-
-											<TableHead>
-												<div className="flex items-center gap-1">
-													<span>LTV (%)</span>
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<HelpCircle className="h-3 w-3 cursor-help text-muted-foreground" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<p>Loan-to-Value ratio - Percentage of your Bitcoin value borrowed as collateral</p>
-														</TooltipContent>
-													</Tooltip>
-												</div>
-											</TableHead>
-
-											<TableHead>
-												<div className="flex items-center gap-1">
-													<span>Debt</span>
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<HelpCircle className="h-3 w-3 cursor-help text-muted-foreground" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<p>Total amount borrowed against your Bitcoin collateral</p>
-														</TooltipContent>
-													</Tooltip>
-												</div>
-											</TableHead>
-
-											<TableHead>
-												<div className="flex items-center gap-1">
-													<span>Interest</span>
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<HelpCircle className="h-3 w-3 cursor-help text-muted-foreground" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<p>Interest payment on the debt borrowed</p>
-														</TooltipContent>
-													</Tooltip>
-												</div>
-											</TableHead>
-
-											<TableHead>
-												<div className="flex items-center gap-1">
-													<span>FCF</span>
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<HelpCircle className="h-3 w-3 cursor-help text-muted-foreground" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<p>
-																Free Cash Flow - Net cash available after borrowing new debt, paying interest, and repaying
-																previous year&apos;s debt
-															</p>
-														</TooltipContent>
-													</Tooltip>
-												</div>
-											</TableHead>
-
-											<TableHead>
-												<div className="flex items-center gap-1">
-													<span>PP_BTC</span>
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<HelpCircle className="h-3 w-3 cursor-help text-muted-foreground" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<p>Price Per Bitcoin - The calculated Bitcoin price based on your total portfolio value</p>
-														</TooltipContent>
-													</Tooltip>
-												</div>
-											</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{yearData.map((data) => (
-											<TableRow key={data.year}>
-												<TableCell className="font-medium">{data.year}</TableCell>
-												{showAge && <TableCell className="font-medium">{data.age}</TableCell>}
-												<TableCell>{formatCurrency(data.value)}</TableCell>
-												<TableCell>
-													<Input
-														type="number"
-														step="1"
-														value={data.agr}
-														onChange={(e) => {
-															const updatedData = updateBitcoinAGR({
-																year: data.year,
-																newAGR: Number.parseFloat(e.target.value) || 0,
-																yearData,
-																holdings,
-																startingYear,
-																interestRate,
-																desiredCashflow
-															})
-															setYearData(updatedData)
-														}}
-														className="w-20"
-													/>
-												</TableCell>
-												<TableCell className={data.gain >= 0 ? "text-green-600" : "text-red-600"}>
-													{formatCurrency(data.gain)}
-												</TableCell>
-												<TableCell>
-													{data.year >= startingYear ? (
-														<span className={data.ltv > 100 ? "text-red-600 font-semibold" : ""}>{formatNumber(data.ltv)}%</span>
-													) : (
-														"0.0"
-													)}
-												</TableCell>
-												<TableCell>{formatCurrency(data.debt)}</TableCell>
-												<TableCell>{formatCurrency(data.interest)}</TableCell>
-												<TableCell className={data.fcf >= 0 ? "text-green-600" : "text-red-600"}>
-													{data.year >= startingYear ? (
-														<Tooltip>
-															<TooltipTrigger asChild>
-																<span className="cursor-help underline">{formatCurrency(data.fcf)}</span>
-															</TooltipTrigger>
-															<TooltipContent className="max-w-xs">
-																<div className="space-y-2">
-																	<p className="font-semibold text-sm">FCF Calculation for {data.year}:</p>
-																	<div className="text-xs space-y-1">
-																		<div className="flex justify-between">
-																			<span>New Debt:</span>
-																			<span className="font-mono">{formatCurrency(data.debt)}</span>
-																		</div>
-																		<div className="flex justify-between">
-																			<span>Interest Payment:</span>
-																			<span className="font-mono text-red-500">-{formatCurrency(data.interest)}</span>
-																		</div>
-																		<div className="flex justify-between">
-																			<span>Previous Year Debt:</span>
-																			<span className="font-mono text-red-500">
-																				-{formatCurrency(yearData.find((d) => d.year === data.year - 1)?.debt || 0)}
-																			</span>
-																		</div>
-																		<hr className="border-gray-300" />
-																		<div className="flex justify-between font-semibold">
-																			<span>Free Cash Flow:</span>
-																			<span className={`font-mono ${data.fcf >= 0 ? "text-green-600" : "text-red-600"}`}>
-																				{formatCurrency(data.fcf)}
-																			</span>
-																		</div>
-																	</div>
-																	<p className="text-xs text-gray-500 italic">Formula: New Debt - Interest - Previous Debt</p>
-																</div>
-															</TooltipContent>
-														</Tooltip>
-													) : (
-														formatCurrency(data.fcf)
-													)}
-												</TableCell>
-												<TableCell>{formatCurrency(data.ppBtc)}</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
+								<FCFCalculatorTable
+									yearData={yearData}
+									showAge={showAge}
+									holdings={holdings}
+									startingYear={startingYear}
+									interestRate={interestRate}
+									desiredCashflow={desiredCashflow}
+									setYearData={setYearData}
+								/>
 							</div>
 						</div>
 						<MarkMossReference />
