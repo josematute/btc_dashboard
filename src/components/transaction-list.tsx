@@ -1,4 +1,4 @@
-import { shortenHash, formatDate } from "@/lib/utils"
+import { shortenHash, formatDate } from "@/lib/utils/string.utils"
 import Link from "next/link"
 import { BitcoinValue } from "@/components/bitcoin-value"
 
