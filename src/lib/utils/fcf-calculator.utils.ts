@@ -1,3 +1,4 @@
+import { defaultBTCAGRValues } from "../mocks/fcf-calculator-mocks"
 import { YearData } from "../types"
 
 interface CalculateYearDataParams {
@@ -20,39 +21,9 @@ export const calculateYearData = ({ holdings, startingPrice, startingYear, inter
   let currentValue = holdings * startingPrice
   let currentPrice = startingPrice
 
-  // Initialize with default AGR values based on the example
-  const defaultAGR: { [key: number]: number } = {
-    2025: 100,
-    2026: -50,
-    2027: 125,
-    2028: 115,
-    2029: 85,
-    2030: -30,
-    2031: 115,
-    2032: 100,
-    2033: 75,
-    2034: -25,
-    2035: 75,
-    2036: 50,
-    2037: 40,
-    2038: -15,
-    2039: 50,
-    2040: 40,
-    2041: 30,
-    2042: -10,
-    2043: 40,
-    2044: 30,
-    2045: 15,
-    2046: -10,
-    2047: 30,
-    2048: 20,
-    2049: 10,
-    2050: -10
-  }
-
   for (let year = currentYear; year <= 2050; year++) {
     const isBeforeStarting = year < startingYear
-    const agr = defaultAGR[year] || 0
+    const agr = defaultBTCAGRValues[year] || 0
     const currentAge = age + (year - currentYear)
 
     // Calculate gain based on AGR
@@ -107,7 +78,10 @@ export const calculateYearData = ({ holdings, startingPrice, startingYear, inter
   return data
 }
 
-
+/**
+ * Returns an array of years from the current year to 2049
+ * @returns Array of years from the current year to 2049
+ */
 export const getYearsUntil2049 = () => {
   const currentYear = getCurrentYear()
   return Array.from({ length: 25 }, (_, i) => currentYear + i) // 2025-2049
