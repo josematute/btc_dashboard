@@ -14,6 +14,7 @@ import { formatCurrency } from "@/lib/utils/prices.utils"
 import { formatNumber } from "@/lib/utils/string.utils"
 import { HelpCircle } from "lucide-react"
 import MarkMossReference from "./mark-moss-credit"
+import FCFVideoLink from "./fcf-video-link"
 
 const DEFAULT_HOLDINGS = 2
 const DEFAULT_STARTING_YEAR = 2026
@@ -68,7 +69,8 @@ export default function FCFCalculator({ btcPrice }: FCFCalculatorProps) {
 							Then input loan information, such as the starting price of whenever you would do the first collateralized loan, the year in which
 							you would do the first loan and the interest rate they would charge you. Finally, you input the desired cashflow you would like to
 							achieve. The calculator will then show you the free cash flow you can achieve each year by displaying how much debt you would have
-							to take out each year, how much interest you would have to pay, and how much free cash flow you would have each year.
+							to take out each year, how much interest you would have to pay, and how much free cash flow you would have each year.{" "}
+							<FCFVideoLink text="Look at this video for more information." />
 						</CardDescription>
 					</CardHeader>
 					<CardContent>

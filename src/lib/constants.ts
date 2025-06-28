@@ -81,3 +81,5 @@ export const SATS_PER_BTC = 100000000
 export const BITCOIN_IMAGE_PATH = "/bitcoin-logo.png"
 export const SATS_IMAGE_PATH = "/sats-icon.png"
 export const USD_IMAGE_PATH = "/dollar-icon.png"
+export const FCF_CALCULATOR_VIDEO_URL = "https://www.youtube.com/watch?v=0dbBQyIGT_4&t=1283s"
+export const MARK_MOSS_YOUTUBE_URL = "https://www.youtube.com/@1MarkMoss"
