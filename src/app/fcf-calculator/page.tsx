@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { YearData } from "@/lib/types"
 import { calculateYearData, getYearsUntil2049, updateBitcoinAGR } from "@/lib/utils/fcf-calculator.utils"
 import { formatCurrency } from "@/lib/utils/prices.utils"
-import { formatNumber } from "@/lib/utils"
+import { formatNumber } from "@/lib/utils/string.utils"
 import { HelpCircle } from "lucide-react"
 
 const DEFAULT_HOLDINGS = 2

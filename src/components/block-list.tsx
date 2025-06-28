@@ -1,4 +1,4 @@
-import { shortenHash, formatDate } from "@/lib/utils"
+import { shortenHash, formatDate } from "@/lib/utils/string.utils"
 import { Block } from "@/lib/types"
 import { Info } from "lucide-react"
 import { useEffect, useState } from "react"

@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatNumber, copyToClipboard } from "@/lib/utils"
+import { formatNumber, copyToClipboard } from "@/lib/utils/string.utils"
 import Link from "next/link"
 import { Database, ChevronLeft, ChevronRight, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"

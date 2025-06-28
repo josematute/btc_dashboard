@@ -1,5 +1,5 @@
 import { StatCard } from "@/components/stat-card"
-import { formatBytes, formatNumber, formatDate } from "@/lib/utils"
+import { formatBytes, formatNumber, formatDate } from "@/lib/utils/string.utils"
 import Image from "next/image"
 import { Blocks, Network, Database } from "lucide-react"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"

@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { copyToClipboard } from "@/lib/utils"
+import { copyToClipboard } from "@/lib/utils/string.utils"
 import { Copy, Check } from "lucide-react"
 import { useState } from "react"
 

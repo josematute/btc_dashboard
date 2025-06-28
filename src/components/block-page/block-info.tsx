@@ -2,11 +2,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Hash } from "lucide-react"
 import Link from "next/link"
 import { CopyButton } from "@/components/copy-button"
-import { formatDate } from "@/lib/utils"
+import { formatDate, shortenHash, formatNumber, formatBytes } from "@/lib/utils/string.utils"
 import { format } from "timeago.js"
-import { shortenHash } from "@/lib/utils"
-import { formatNumber } from "@/lib/utils"
-import { formatBytes } from "@/lib/utils"
 import { Block } from "@/lib/types"
 
 interface BlockInfoProps {

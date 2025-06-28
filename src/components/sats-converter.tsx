@@ -2,11 +2,14 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Bitcoin } from "lucide-react"
+import { BITCOIN_IMAGE_PATH, SATS_IMAGE_PATH, USD_IMAGE_PATH } from "@/lib/constants"
+import Image from "next/image"
+import { formatWithCommas } from "@/lib/utils/prices.utils"
 
 const SATS_PER_BTC = 100000000
 const DEFAULT_USD_VALUE = "100"
@@ -26,69 +29,6 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 
 	const effectivePrice = useCustomPrice ? Number.parseFloat(customPrice.replace(/,/g, "")) || btcPrice : btcPrice
 
-	// Format number with commas, preserving significant digits
-	const formatWithCommas = (value: string, preserveSignificantDigits?: boolean): string => {
-		// Remove existing commas
-		const cleanValue = value.replace(/,/g, "")
-
-		// If empty or just a decimal point, return as is
-		if (!cleanValue || cleanValue === ".") return cleanValue
-
-		// If preserveSignificantDigits is true, keep all significant digits
-		let processedValue = cleanValue
-		if (preserveSignificantDigits) {
-			const num = Number.parseFloat(cleanValue)
-			if (!isNaN(num)) {
-				// Custom formatting based on value size
-				if (Math.abs(num) >= 1) {
-					// For numbers >= 1, limit to 2 decimal places
-					processedValue = parseFloat(num.toFixed(2)).toString()
-				} else if (num === 0) {
-					processedValue = "0"
-				} else {
-					// For numbers < 1, show leading zeros + first 2 non-zero digits
-					// Use toFixed with high precision to avoid scientific notation
-					const numStr = num.toFixed(20).replace(/\.?0+$/, "")
-					const [, decimal] = numStr.split(".")
-
-					if (decimal) {
-						// Find the first non-zero digit
-						let firstNonZeroIndex = -1
-						for (let i = 0; i < decimal.length; i++) {
-							if (decimal[i] !== "0") {
-								firstNonZeroIndex = i
-								break
-							}
-						}
-
-						if (firstNonZeroIndex !== -1) {
-							// Take leading zeros + first 2 non-zero digits
-							const leadingZeros = decimal.substring(0, firstNonZeroIndex)
-							const nonZeroDigits = decimal.substring(firstNonZeroIndex)
-							const firstTwoNonZero = nonZeroDigits.substring(0, 2)
-
-							processedValue = `0.${leadingZeros}${firstTwoNonZero}`
-						} else {
-							processedValue = "0"
-						}
-					} else {
-						processedValue = numStr
-					}
-				}
-			}
-		}
-
-		// Split by decimal point
-		const parts = processedValue.split(".")
-
-		// Format the integer part with commas
-		parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-
-		// Join back with decimal if it exists
-		return parts.join(".")
-	}
-
-	// Validate and format input
 	const handleInputChange = (value: string, setValue: (val: string) => void, source: string) => {
 		// Remove any non-digit, non-decimal, non-comma characters
 		const cleaned = value.replace(/[^0-9.,]/g, "")
@@ -113,34 +53,37 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 	}
 
 	// Calculate other values based on source
-	const calculateValues = (source: string, rawValue: string) => {
-		const numValue = Number.parseFloat(rawValue) || 0
+	const calculateValues = useCallback(
+		(source: string, rawValue: string) => {
+			const numValue = Number.parseFloat(rawValue) || 0
 
-		if (source === "usd") {
-			const btc = numValue / effectivePrice
-			const sats = btc * SATS_PER_BTC
+			if (source === "usd") {
+				const btc = numValue / effectivePrice
+				const sats = btc * SATS_PER_BTC
 
-			setBtcValue(formatWithCommas(btc.toString(), true))
-			setSatsValue(formatWithCommas(Math.round(sats).toString()))
-		} else if (source === "btc") {
-			const usd = numValue * effectivePrice
-			const sats = numValue * SATS_PER_BTC
+				setBtcValue(formatWithCommas(btc.toString(), true))
+				setSatsValue(formatWithCommas(Math.round(sats).toString()))
+			} else if (source === "btc") {
+				const usd = numValue * effectivePrice
+				const sats = numValue * SATS_PER_BTC
 
-			setUsdValue(formatWithCommas(usd.toString(), true))
-			setSatsValue(formatWithCommas(Math.round(sats).toString()))
-		} else if (source === "sats") {
-			const btc = numValue / SATS_PER_BTC
-			const usd = btc * effectivePrice
+				setUsdValue(formatWithCommas(usd.toString(), true))
+				setSatsValue(formatWithCommas(Math.round(sats).toString()))
+			} else if (source === "sats") {
+				const btc = numValue / SATS_PER_BTC
+				const usd = btc * effectivePrice
 
-			setUsdValue(formatWithCommas(usd.toString(), true))
-			setBtcValue(formatWithCommas(btc.toString(), true))
-		}
-	}
+				setUsdValue(formatWithCommas(usd.toString(), true))
+				setBtcValue(formatWithCommas(btc.toString(), true))
+			}
+		},
+		[effectivePrice]
+	)
 
 	// Initialize values
 	useEffect(() => {
 		calculateValues("usd", "100")
-	}, [effectivePrice])
+	}, [calculateValues])
 
 	const handleCustomPriceChange = (value: string) => {
 		handleInputChange(value, setCustomPrice, "price")
@@ -178,7 +121,7 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 					{/* Custom Price Toggle */}
 					<div className="mt-4 space-y-3">
 						<div className="flex items-center gap-2">
-							<input
+							<Input
 								type="checkbox"
 								id="useCustomPrice"
 								checked={useCustomPrice}
@@ -213,9 +156,12 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 
 				<CardContent className="space-y-6">
 					<div className="space-y-2">
-						<Label htmlFor="usd" className="text-base font-medium">
-							US Dollars (USD)
-						</Label>
+						<div className="flex items-center gap-2">
+							<Image src={USD_IMAGE_PATH} alt="USD" width={20} height={20} />
+							<Label htmlFor="usd" className="text-base font-medium">
+								US Dollars (USD)
+							</Label>
+						</div>
 						<div className="relative">
 							<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
 							<Input
@@ -233,9 +179,12 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="btc" className="text-base font-medium">
-							Bitcoin (BTC)
-						</Label>
+						<div className="flex items-center gap-2">
+							<Image src={BITCOIN_IMAGE_PATH} alt="BTC" width={20} height={20} />
+							<Label htmlFor="btc" className="text-base font-medium">
+								Bitcoin (BTC)
+							</Label>
+						</div>
 						<div className="relative">
 							<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">₿</span>
 							<Input
@@ -253,9 +202,12 @@ export default function SatsConverter({ btcPrice }: SatsConverterProps) {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="sats" className="text-base font-medium">
-							Satoshis (sats)
-						</Label>
+						<div className="flex items-center gap-2">
+							<Image src={SATS_IMAGE_PATH} alt="sats" width={20} height={20} />
+							<Label htmlFor="sats" className="text-base font-medium">
+								Satoshis (SATS)
+							</Label>
+						</div>
 						<Input
 							id="sats"
 							type="text"
