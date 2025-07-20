@@ -6,11 +6,7 @@ import { AlertOctagon } from "lucide-react"
 import Link from "next/link"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 
-interface SatsConverterErrorProps {
-	error: Error & { digest?: string }
-}
-
-export default function SatsConverterError({ error }: SatsConverterErrorProps) {
+export default function SatsConverterError() {
 	return (
 		<div className="flex flex-col items-center justify-center min-h-[80vh] p-4 text-center" data-testid="sats-converter-error">
 			<div className="flex items-center justify-center mb-4">
@@ -25,7 +21,6 @@ export default function SatsConverterError({ error }: SatsConverterErrorProps) {
 
 			<p className="text-xl text-muted-foreground max-w-lg mb-6">
 				We couldn&apos;t load the sats converter. This might be due to a network issue or API failure.
-				{error.digest && <span className="block mt-2 text-sm font-mono">Error ID: {error.digest}</span>}
 			</p>
 
 			<div className="flex flex-col sm:flex-row gap-4">
