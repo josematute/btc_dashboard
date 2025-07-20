@@ -5,7 +5,8 @@ import FCFCalculator from "@/components/fcf-calculator/fcf-calculator"
 
 export const metadata: Metadata = {
 	title: "FCF Calculator - Free Cash Flow Bitcoin Strategy Calculator",
-	description: "Calculate free cash flow from Bitcoin investments using the Mark Moss strategy. Model Bitcoin collateral loans and cash flow generation over time.",
+	description:
+		"Calculate free cash flow from Bitcoin investments using the Mark Moss strategy. Model Bitcoin collateral loans and cash flow generation over time."
 }
 
 // Force dynamic rendering since we need fresh Bitcoin price data
@@ -15,7 +16,7 @@ export default async function Page() {
 	const btcPrice = await getBitcoinPrice()
 
 	if (!btcPrice) {
-		return <SatsConverterError error={new Error("Failed to fetch Bitcoin price")} />
+		return <SatsConverterError />
 	}
 
 	return <FCFCalculator btcPrice={btcPrice} />
