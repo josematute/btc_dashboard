@@ -1,6 +1,4 @@
-"use client"
-
-import { Bitcoin24Projection } from "@/lib/types"
+import { Bitcoin24Projection, ChartTooltipProps, ChartDataPoint } from "@/lib/types"
 import { formatCurrency, formatPercentage } from "@/lib/utils/bitcoin24.utils"
 import { Card } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, BarChart, Bar } from "recharts"
@@ -12,7 +10,7 @@ interface ProjectionChartProps {
 
 export function ProjectionChart({ projection, showRealValue = false }: ProjectionChartProps) {
 	// Prepare chart data
-	const chartData = projection.results.map((result) => ({
+	const chartData: ChartDataPoint[] = projection.results.map((result) => ({
 		year: result.year,
 		totalValue: result.totalValue,
 		bitcoinValue: result.bitcoinValue,
@@ -23,12 +21,12 @@ export function ProjectionChart({ projection, showRealValue = false }: Projectio
 	}))
 
 	// Custom tooltip formatter
-	const CustomTooltip = ({ active, payload, label }: any) => {
+	const CustomTooltip = ({ active, payload, label }: ChartTooltipProps) => {
 		if (active && payload && payload.length) {
 			return (
 				<div className="bg-white p-3 border rounded shadow-lg">
 					<p className="font-semibold">{`Year ${label}`}</p>
-					{payload.map((entry: any, index: number) => (
+					{payload.map((entry, index) => (
 						<p key={index} style={{ color: entry.color }}>
 							{`${entry.name}: ${
 								entry.dataKey === "bitcoinPrice"

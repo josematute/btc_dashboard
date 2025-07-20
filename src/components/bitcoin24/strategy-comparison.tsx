@@ -1,7 +1,5 @@
-"use client"
-
 import { useState } from "react"
-import { StrategyType, ScenarioType, Bitcoin24Assumptions, Bitcoin24Projection } from "@/lib/types"
+import { StrategyType, ScenarioType, Bitcoin24Assumptions, Bitcoin24Projection, ChartTooltipProps, ComparisonChartDataPoint } from "@/lib/types"
 import { compareStrategies, STRATEGY_CONFIGS, formatCurrency, formatPercentage } from "@/lib/utils/bitcoin24.utils"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -48,10 +46,10 @@ export function StrategyComparison({ scenario, assumptions }: StrategyComparison
 	}
 
 	// Prepare chart data for comparison
-	const chartData =
+	const chartData: ComparisonChartDataPoint[] =
 		comparisons.length > 0
 			? comparisons[0].results.map((_, yearIndex) => {
-					const yearData: any = { year: yearIndex }
+					const yearData: ComparisonChartDataPoint = { year: yearIndex }
 					comparisons.forEach((comparison) => {
 						const yearResult = comparison.results[yearIndex]
 						yearData[`${comparison.strategy}_total`] = yearResult.totalValue
@@ -62,12 +60,12 @@ export function StrategyComparison({ scenario, assumptions }: StrategyComparison
 			  })
 			: []
 
-	const CustomTooltip = ({ active, payload, label }: any) => {
+	const CustomTooltip = ({ active, payload, label }: ChartTooltipProps) => {
 		if (active && payload && payload.length) {
 			return (
 				<div className="bg-white p-3 border rounded shadow-lg">
 					<p className="font-semibold">{`Year ${label}`}</p>
-					{payload.map((entry: any, index: number) => (
+					{payload.map((entry, index) => (
 						<p key={index} style={{ color: entry.color }}>
 							{`${entry.name}: ${formatCurrency(entry.value)}`}
 						</p>
@@ -92,7 +90,7 @@ export function StrategyComparison({ scenario, assumptions }: StrategyComparison
 							}`}
 							onClick={() => handleStrategyToggle(strategy.type)}>
 							<div className="flex items-center space-x-2 mb-2">
-								<Checkbox checked={selectedStrategies.includes(strategy.type)} readOnly />
+								<Checkbox checked={selectedStrategies.includes(strategy.type)} onCheckedChange={() => {}} />
 								<span className="font-medium text-sm">{strategy.name}</span>
 							</div>
 							<p className="text-xs text-muted-foreground">{strategy.description}</p>

@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { getTransaction } from "@/lib/tx-actions"
@@ -6,6 +7,31 @@ import { Tx } from "@/lib/types"
 import { TxInformation } from "@/components/tx/tx-information"
 import { TxInputsOutputs } from "@/components/tx/tx-inputsoutputs"
 import { TxRaw } from "@/components/tx/tx-raw"
+
+type Props = {
+	params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { id } = await params
+	const tx = (await getTransaction(id)) as Tx
+
+	if (!tx) {
+		return {
+			title: "Transaction Not Found - Bitcoin Dashboard",
+			description: "The requested Bitcoin transaction could not be found.",
+		}
+	}
+
+	const truncatedTxid = tx.txid.substring(0, 16)
+	const inputCount = tx.vin.length
+	const outputCount = tx.vout.length
+
+	return {
+		title: `Bitcoin Transaction ${truncatedTxid}... - Bitcoin Dashboard`,
+		description: `Bitcoin transaction details with ${inputCount} inputs and ${outputCount} outputs. Transaction ID: ${tx.txid}`,
+	}
+}
 
 export default async function TransactionPage({ params }: { params: Promise<{ id: string }> }) {
 	const txid = (await params).id

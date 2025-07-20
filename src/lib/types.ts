@@ -262,3 +262,33 @@ export interface ComparisonData {
   createdAt: Date
   lastUpdated: Date
 }
+
+// Chart data types
+export interface ChartTooltipPayload {
+  color: string
+  dataKey: string
+  name: string
+  value: number
+  payload: Record<string, unknown>
+}
+
+export interface ChartTooltipProps {
+  active?: boolean
+  payload?: ChartTooltipPayload[]
+  label?: string | number
+}
+
+export interface ChartDataPoint {
+  year: number
+  totalValue: number
+  bitcoinValue: number
+  traditionalValue: number
+  realValue: number
+  bitcoinPrice: number
+  annualReturn: number
+}
+
+export interface ComparisonChartDataPoint {
+  year: number
+  [key: string]: number // Dynamic strategy keys like "normie_total", "btc10_total", etc.
+}

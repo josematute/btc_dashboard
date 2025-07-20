@@ -1,5 +1,11 @@
+import { Metadata } from "next"
 import { getLatestBlocks } from "@/lib/block-actions"
 import { LatestBlocksSection } from "@/components/latest-blocks-section"
+
+export const metadata: Metadata = {
+	title: "Latest Bitcoin Blocks - Bitcoin Dashboard",
+	description: "Browse the latest Bitcoin blocks with detailed information including block height, timestamp, transaction count, and block size.",
+}
 
 // Force dynamic rendering since we need to fetch live data
 export const dynamic = "force-dynamic"

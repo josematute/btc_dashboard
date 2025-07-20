@@ -1,4 +1,6 @@
+import { Metadata } from "next"
 import { StatCard } from "@/components/stat-card"
+
 import { formatBytes, formatNumber, formatDate } from "@/lib/utils/string.utils"
 import Image from "next/image"
 import { Blocks, Network, Database } from "lucide-react"
@@ -8,6 +10,11 @@ import { FamousBlocks } from "@/components/dashboard/famous-blocks"
 import { BITCOIN_IMAGE_PATH } from "@/lib/constants"
 import { NetworkInfoCard } from "@/components/dashboard/network-info-card"
 import { BlockchainStats } from "@/components/dashboard/blockchain-stats"
+
+export const metadata: Metadata = {
+	title: "Bitcoin Dashboard - Real-time Bitcoin Blockchain Explorer",
+	description: "Real-time Bitcoin blockchain explorer with live network statistics, latest blocks, transactions, and comprehensive Bitcoin tools including price converter and FCF calculator.",
+}
 
 // Force dynamic rendering since we need to fetch live data
 export const dynamic = "force-dynamic"

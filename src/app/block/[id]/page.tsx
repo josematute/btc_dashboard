@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react"
 import { getBlock } from "@/lib/block-actions"
@@ -8,6 +9,30 @@ import { SPECIAL_BLOCKS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 import { BlockInfo } from "@/components/block-page/block-info"
 import { SpecialBlockInfo } from "@/components/block-page/special-block-info"
+
+type Props = {
+	params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { id } = await params
+	const block = await getBlock(id)
+
+	if (!block) {
+		return {
+			title: "Block Not Found - Bitcoin Dashboard",
+			description: "The requested Bitcoin block could not be found.",
+		}
+	}
+
+	const isSpecialBlock = block.height in SPECIAL_BLOCKS
+	const specialInfo = isSpecialBlock ? ` - ${SPECIAL_BLOCKS[block.height].title}` : ""
+
+	return {
+		title: `Bitcoin Block #${block.height}${specialInfo} - Bitcoin Dashboard`,
+		description: `Bitcoin block #${block.height} details including ${block.nTx} transactions, block hash ${block.hash.substring(0, 16)}..., and complete block information.`,
+	}
+}
 
 export default async function BlockPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params
