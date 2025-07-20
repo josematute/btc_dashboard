@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github-production-user-asset-6210df.s3.amazonaws.com)"
+    ],
+    "deny": []
+  }
+}

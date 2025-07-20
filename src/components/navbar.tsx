@@ -14,6 +14,7 @@ export function Navbar() {
 	const [isOpen, setIsOpen] = useState(false)
 	const isSatsConverterPage = usePathname() === "/sats-converter"
 	const isFCFCalculatorPage = usePathname() === "/fcf-calculator"
+	const isBitcoin24Page = usePathname() === "/bitcoin24"
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 h-16">
@@ -36,6 +37,13 @@ export function Navbar() {
 							<Link href="/fcf-calculator">
 								<Button variant="outline" size="sm" className="cursor-pointer">
 									FCF Calculator
+								</Button>
+							</Link>
+						)}
+						{!isBitcoin24Page && (
+							<Link href="/bitcoin24">
+								<Button variant="outline" size="sm" className="cursor-pointer">
+									Bitcoin24
 								</Button>
 							</Link>
 						)}
@@ -73,6 +81,15 @@ export function Navbar() {
 												<Link href="/fcf-calculator" className="block" onClick={() => setIsOpen(false)}>
 													<Button variant="outline" className="w-full cursor-pointer max-w-[150px]">
 														FCF Calculator
+													</Button>
+												</Link>
+											</div>
+										)}
+										{!isBitcoin24Page && (
+											<div className="px-2">
+												<Link href="/bitcoin24" className="block" onClick={() => setIsOpen(false)}>
+													<Button variant="outline" className="w-full cursor-pointer max-w-[150px]">
+														Bitcoin24
 													</Button>
 												</Link>
 											</div>

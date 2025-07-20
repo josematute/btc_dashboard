@@ -183,3 +183,82 @@ export interface YearData {
   fcf: number
   ppBtc: number
 }
+
+// Bitcoin24 Strategy Types
+export type StrategyType = "normie" | "btc10" | "btc_maxi" | "double_maxi" | "triple_maxi"
+
+export type ScenarioType = "individual" | "corporate" | "institution" | "nation_state"
+
+export interface StrategyConfig {
+  type: StrategyType
+  name: string
+  description: string
+  bitcoinAllocation: number // percentage
+  traditionalAllocation: number // percentage
+  riskProfile: "low" | "medium" | "high" | "extreme"
+}
+
+export interface ScenarioConfig {
+  type: ScenarioType
+  name: string
+  description: string
+  defaultInvestment: number
+  timeHorizon: number // years
+  riskTolerance: "conservative" | "moderate" | "aggressive"
+}
+
+export interface Bitcoin24Assumptions {
+  // Economic parameters
+  initialInvestment: number // USD
+  annualInflationRate: number // percentage
+  traditionalAssetReturn: number // percentage annual
+  
+  // Bitcoin parameters
+  bitcoinAllocation: number // percentage
+  bitcoinAnnualGrowthRate: number // percentage
+  adoptionTimeline: number // years
+  
+  // Advanced parameters
+  volatilityFactor: number // multiplier for price swings
+  regulatoryRisk: number // percentage impact
+  technologyRisk: number // percentage impact
+  
+  // Scenario-specific parameters
+  taxRate: number // percentage
+  inflationHedge: boolean
+  dollarCostAveraging: boolean
+}
+
+export interface Bitcoin24Result {
+  year: number
+  traditionalAssetValue: number
+  bitcoinValue: number
+  totalValue: number
+  realValue: number // adjusted for inflation
+  bitcoinPrice: number // estimated BTC price
+  cumulativeGain: number
+  annualReturn: number
+}
+
+export interface Bitcoin24Projection {
+  strategy: StrategyType
+  scenario: ScenarioType
+  assumptions: Bitcoin24Assumptions
+  results: Bitcoin24Result[]
+  summary: {
+    finalValue: number
+    totalReturn: number
+    annualizedReturn: number
+    maxDrawdown: number
+    sharpeRatio: number
+    bitcoinFinalPrice: number
+  }
+}
+
+export interface ComparisonData {
+  strategies: Bitcoin24Projection[]
+  baselineStrategy: StrategyType
+  timeHorizon: number
+  createdAt: Date
+  lastUpdated: Date
+}
